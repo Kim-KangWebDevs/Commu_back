@@ -1,0 +1,29 @@
+server:
+  #서버
+  port: 8888 
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+spring:
+  #뷰
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+    static-path-pattern: /resources/**
+  
+  #오라클 
+  datasource:
+    url: jdbc:oracle:thin:@127.0.0.1:1521:XE
+    username: commu  
+    password: commu  
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+      
+mybatis:
+  #매퍼
+  mapper-locations: mapper/*.xml
+  cache-enabled: false
+
