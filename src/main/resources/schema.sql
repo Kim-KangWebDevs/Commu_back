@@ -43,7 +43,7 @@ create table file_tb(
     file_no number not null primary key,
     board_no number not null,
     board_type varchar2(32) not null,
-    file_name varchar2(64) not null, 
+    file_name varchar2(256) not null, 
     file_regdate date default sysdate,
     primary key(file_no) 
 );
@@ -61,10 +61,23 @@ create table user_tb(
     user_chr varchar(32) not null, 
     user_email varchar(64) not null, 
     user_regdate date default sysdate,
-    user_image varchar(256) default null 
+    file_name varchar(256) default null 
 );
 
 --유저 seq
 create sequence user_seq 
         increment by 1 
         start with 1;
+        
+--get seq procedure
+create or replace function get_seq(seq_name in varchar2) 
+return 
+    number 
+is
+    seq_num number;
+    sql_stmt varchar2(64);
+begin
+    sql_stmt := 'select ' || seq_name || '.nextval from dual';
+    execute immediate sql_stmt into seq_num;
+    return seq_num;
+end;
