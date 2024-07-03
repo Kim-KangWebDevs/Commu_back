@@ -67,7 +67,13 @@ create table user_tb(
 create sequence user_seq 
         increment by 1 
         start with 1;
-        
+
+-- 권한
+create table auth_tb(
+    auth_no number default 3 primary key,
+    auth_name varchar(32) not null 
+);
+
 --get seq procedure
 create or replace function get_seq(seq_name in varchar2) 
 return 
