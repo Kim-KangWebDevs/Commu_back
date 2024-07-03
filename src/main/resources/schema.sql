@@ -44,8 +44,7 @@ create table file_tb(
     board_no number not null,
     board_type varchar2(32) not null,
     file_name varchar2(256) not null, 
-    file_regdate date default sysdate,
-    primary key(file_no) 
+    file_regdate date default sysdate 
 );
 
 --파일 seq
