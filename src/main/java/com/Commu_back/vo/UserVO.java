@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserVo {
+public class UserVO {
 	private int userNo;
 	private String userId;
 	private String userPw;

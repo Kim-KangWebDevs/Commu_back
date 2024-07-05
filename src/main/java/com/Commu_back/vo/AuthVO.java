@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AuthVo {
+public class AuthVO {
 	
 	private int roleNo;
 	private String roleName;
