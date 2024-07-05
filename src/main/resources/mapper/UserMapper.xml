@@ -4,4 +4,38 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="com.Commu_back.mapper.UserMapper">
+
+	<!-- 사용자 조회 -->
+	<select id="selectUserInfo" resultType="UserVO">
+		SELECT
+			user_no AS userNo,
+			user_id AS userId,
+			user_pw AS userPw,
+			user_chr AS userChr,
+			user_email AS userEmail,
+			DATE_FORMAT(user_regdate, "%Y-%m-%d") AS userRegdate,
+			file_name AS fileName,
+			role_no as roleNo
+		FROM 
+			user_tb
+		WHERE 
+			user_id = #{userId}
+	</select>
+	
+	<!-- 전체 사용자 조회 -->
+	<select id="selectUsersAll" resultType="UserVO">
+		SELECT
+			u.user_no AS userNo,
+			u.user_id AS userId,
+			u.user_pw AS userPw,
+			u.user_chr AS userChr,
+			u.user_email AS userEmail,
+			DATE_FORMAT(u.user_regdate, "%Y-%m-%d") AS userRegdate,
+			u.file_name AS fileName,
+			r.role_desc AS roleDesc
+		FROM 
+		user_tb u INNER JOIN role_tb r
+		on
+		u.role_id = r.role_id
+	</select>
 </mapper>
