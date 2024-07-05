@@ -68,6 +68,14 @@ public class BoardController {
 	}
 	
 	// get response methods
+	// get board's category list 
+	@GetMapping("/listcategory.do")
+	@ResponseBody
+	public ResponseEntity<String> listCategory(@RequestParam("btype") String board_type) throws Exception {
+		
+		return new ResponseEntity<>("1", HttpStatus.OK);
+	}
+	
 	// add board's category 
 	@GetMapping("/addcategory.do")
 	@ResponseBody
