@@ -1,5 +1,7 @@
 package com.Commu_back.vo;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +15,9 @@ public class UserVO {
 	private String userEmail;
 	private String userRegdate; //유저 가입날짜
 	private String fileName;
-	
+	private List<AuthVO> authList;
+	private int roleNo;
+	private String roleName;
 	
 	
 }

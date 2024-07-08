@@ -11,8 +11,4 @@ public class AuthVO {
 	private String roleName;
 	private String roleDesc;
 	
-	public int getroleNo() {
-		return this.roleNo;
-	}
-
 }

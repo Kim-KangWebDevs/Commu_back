@@ -5,7 +5,7 @@
   
 <mapper namespace="com.Commu_back.mapper.UserMapper">
 
-	<!-- 사용자 조회 -->
+	<!-- 특정 사용자 조회 -->
 	<select id="selectUserInfo" resultType="UserVO">
 		SELECT
 			user_no AS userNo,
@@ -14,10 +14,26 @@
 			user_chr AS userChr,
 			user_email AS userEmail,
 			DATE_FORMAT(user_regdate, "%Y-%m-%d") AS userRegdate,
-			file_name AS fileName,
-			role_no as roleNo
+			file_name AS fileName
 		FROM 
 			user_tb
+		WHERE 
+			user_id = #{userId}
+	</select>
+	
+	<!-- 사용자 권환 조회 -->
+	<select id="selectUserAuth" resultType="UserVO">
+		SELECT
+			r.role_no AS roleNo,
+			r.role_name AS roleName,
+			r.role_desc AS roleDesc
+		FROM 
+			user_tb u INNER JOIN user_role_tb ur
+			ON 
+			u.user_no = ur.user_no
+			INNER JOIN role_tb r
+			ON 
+			r.role_No = ur.role_No
 		WHERE 
 			user_id = #{userId}
 	</select>
@@ -34,8 +50,79 @@
 			u.file_name AS fileName,
 			r.role_desc AS roleDesc
 		FROM 
-		user_tb u INNER JOIN role_tb r
-		on
-		u.role_id = r.role_id
+			user_tb u INNER JOIN user_role_tb ur
+			ON
+			u.user_no = ur.user_no
+			INNER JOIN role_tb r
+			ON
+			ur.role_No =r.role_No
 	</select>
+		
+	<!-- 사용자 추가 -->
+	<insert id="insertUser">
+		INSERT INTO user_tb
+		(
+		user_id,
+		user_password,
+		user_chr,
+		user_email,
+		file_name
+		)
+	VALUES
+		(
+		#{userId},
+		#{userPw},
+		#{userChr},
+		#{userEmail},
+		#{fileName}
+		)
+	</insert>
+	
+	<!-- 사용자 권환 추가 -->
+	<insert id="insertAuth">
+		INSERT INTO user_role_tb
+		(
+			user_no,
+			role_no
+		)
+		VALUES
+		(
+			#{userNo},
+			#{roleNo}
+		)
+	</insert>
+	
+	<!-- 사용자 수정 -->
+	<update id="updateUser">
+		UPDATE
+			user_tb
+		SET
+			user_id = #{userId}
+			<if test="userId != null">
+				,user_id = #{userId}
+			</if>
+			<if test="userPw != null">
+				,user_pw = #{userPw}
+			</if>
+			<if test="userChr != null">
+				,user_chr = #{userChr}
+			</if>
+			<if test="userEmail != null">
+				,user_email = #{userEmail}
+			</if>
+			file_name = #{fileName}
+		WHERE
+			user_no = #{userNo}
+	</update>
+	
+	<!-- 특정 사용자 삭제 -->
+	<delete id="deleteUser">
+		DELETE
+		FROM 
+			user_tb
+		WHERE
+			user_no = #{userNo}
+	</delete>
+	
+	
 </mapper>
