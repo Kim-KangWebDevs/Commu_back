@@ -40,9 +40,9 @@ public class BoardController {
 	 * link to board category page
 	 */
 	@GetMapping("/category")
-	public String boardCategory() throws Exception {
+	public String boardCategory(@RequestParam("id") String board_id) throws Exception {
 
-		return "null";
+		return "/Board/CategoryPage";
 	}
 
 	/*
@@ -52,19 +52,23 @@ public class BoardController {
 	@GetMapping("/search")
 	public String boardSearch(@RequestParam("id") String board_id,
 			@RequestParam(value = "no", required = false) Integer board_no,
-			@RequestParam(value = "keytype", required = false) String keyword_type,
+			@RequestParam(value = "target", required = false) String target,
 			@RequestParam(value = "keyword", required = false) String keyword,
-			@RequestParam(value = "page", required = false) Integer curPage) throws Exception {
+			@RequestParam(value = "page", required = false) Integer page) throws Exception {
 
 		String board_name = boardservice.findBoardName(board_id);
 
 		if (board_name == "null") {
+			
 			log.info("Linked to MainPage");
 			return "redirect:/";
+			
 		}
 
 		if (board_no != null) {
+			
 			boardservice.addBoardViews(board_no);
+			
 			log.info("Linked to DetailPage");
 			return "/Board/DetailPage";
 		}
@@ -84,15 +88,15 @@ public class BoardController {
 
 	// get response methods
 	// get board's category list
-	@GetMapping("/listcategory.do")
-	@ResponseBody
-	public ResponseEntity<Map<String, Object>> listCategory(@RequestParam("id") String board_id) throws Exception {
-
-		Map<String, Object> categoryMap = new HashMap<String, Object>();
-		categoryMap.put("list", boardservice.findBoardCategory(board_id));
-		categoryMap.put
-		return new ResponseEntity<>(categoryMap, HttpStatus.OK);
-	}
+//	@GetMapping("/listcategory.do")
+//	@ResponseBody
+//	public ResponseEntity<Map<String, Object>> listCategory(@RequestParam("id") String board_id) throws Exception {
+//
+//		Map<String, Object> categoryMap = new HashMap<String, Object>();
+//		categoryMap.put("list", boardservice.findBoardCategory(board_id));
+//		categoryMap.put
+//		return new ResponseEntity<>(categoryMap, HttpStatus.OK);
+//	}
 
 	// add board's category
 	@GetMapping("/addcategory.do")
@@ -111,26 +115,25 @@ public class BoardController {
 		return new ResponseEntity<>(1, HttpStatus.OK);
 	}
 
-	// get board's category by KR-leng
-	@GetMapping("/translatecategory.do")
+	// 카테고리 이름 조회 
+	@GetMapping("/namecategory.do")
 	@ResponseBody
-	public ResponseEntity<String> translateCategory(@RequestParam("id") String board_id) throws Exception {
+	public ResponseEntity<String> nameCategory(@RequestParam("id") String board_id) throws Exception {
 
 		return new ResponseEntity<>("1", HttpStatus.OK);
 	}
 
-	//
+	// 게시글 리스트 조회
 	@GetMapping("/boardlist.do")
 	@ResponseBody
 	public ResponseEntity<Map<String, Object>> boardList(@RequestParam("id") String board_id,
-			@RequestParam("keytype") String keyword_type, @RequestParam("keyword") String keyword,
-			@RequestParam("page") String curPage) throws Exception {
+			@RequestParam("target") String target, @RequestParam("keyword") String keyword,
+			@RequestParam("page") String page) throws Exception {
 
-		Map<String, Object> boardMap = new HashMap<String, Object>();
-		return new ResponseEntity<>(null, HttpStatus.OK);
+		return new ResponseEntity<>(boardservice.fineBoardList(board_id, target, keyword, page), HttpStatus.OK);
 	}
 
-	//
+	// 게시글 조회
 	@PostMapping("/boarddetail.do")
 	@ResponseBody
 	public ResponseEntity<BoardVO> boardDetail(@RequestParam("no") String board_no) throws Exception {
@@ -139,19 +142,19 @@ public class BoardController {
 		return new ResponseEntity<>(boardVO, HttpStatus.OK);
 	}
 
-	//
+	// 게시글 추가 및 수정
 	@PostMapping("/boardwrite.do")
 	public ResponseEntity<Integer> boardWrite(@RequestBody BoardVO boardVO) throws Exception {
 
-		return new ResponseEntity<>(1, HttpStatus.OK);
+		return new ResponseEntity<>(boardservice.addBoard(boardVO), HttpStatus.OK);
 	}
-
-	//
+	
+	// 게시글 삭제 
 	@GetMapping("/boardremove.do")
 	@ResponseBody
-	public ResponseEntity<Integer> boardRemove(@RequestParam("no") String board_no) throws Exception {
+	public ResponseEntity<Integer> boardRemove(@RequestParam("no") int board_no) throws Exception {
 
-		return new ResponseEntity<>(1, HttpStatus.OK);
+		return new ResponseEntity<>(boardservice.removeBoard(board_no), HttpStatus.OK);
 	}
 
 }

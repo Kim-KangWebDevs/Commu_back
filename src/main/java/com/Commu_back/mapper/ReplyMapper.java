@@ -1,6 +1,6 @@
 package com.Commu_back.mapper;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
@@ -14,7 +14,7 @@ public interface ReplyMapper {
 			throws Exception;
 
 	// 댓글 리스트 조회
-	public ArrayList<ReplyVO> selectReplyList(Map<String, Object> reply_map) throws Exception;
+	public List<ReplyVO> selectReplyList(Map<String, Object> reply_map) throws Exception;
 
 	// 댓글 추가
 	public int insertReply(ReplyVO replyVO) throws Exception;
