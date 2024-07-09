@@ -15,6 +15,9 @@ public interface UserMapper {
 	//전체 사용자 조회
 	public List<UserVO> selectUsersAll();
 	
+	//사용자 조회 번호
+	public UserVO selectUserNo(@Param("userId") int userNo);
+	
 	//특정 사용자 조회
 	public UserVO selectUserInfo(@Param("userId") String userId);
 	

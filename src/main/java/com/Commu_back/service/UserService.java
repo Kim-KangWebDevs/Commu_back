@@ -27,10 +27,17 @@ public class UserService {
 		userVo.setUserPw(pw);
 		return userMapper.insertUser(userVo);
 	}
+	
+	//사용자번호조회
+	public UserVO getselectUserNo(int userNo){
+		return userMapper.selectUserNo(userNo);
+	}
+	
 	//전체조회
 	public List<UserVO> getselectUsersAll(){
 		return userMapper.selectUsersAll();
 	}
+	
 	//특정사용자조회
 	public List<AuthVO> selectUserAuth(String userId){
 		return userMapper.selectUserAuth(userId);

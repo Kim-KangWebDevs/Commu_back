@@ -124,5 +124,20 @@
 			user_no = #{userNo}
 	</delete>
 	
+	<!-- 특정사용자 조회 -->
+	<select id="selectUserNo" resultType="UsersVO">
+		SELECT
+			user_no AS userNo,
+			user_id AS userId,
+			user_pw AS userPw,
+			user_chr AS userChr,
+			user_email AS userEmail,
+			DATE_FORMAT(user_regdate, "%Y-%m-%d") AS userRegdate,
+			file_name AS fileName
+		FROM
+			user_tb
+		WHERE
+			user_no = #{userNo}
+	</select>
 	
 </mapper>
