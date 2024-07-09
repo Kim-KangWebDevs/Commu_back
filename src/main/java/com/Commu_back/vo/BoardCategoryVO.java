@@ -6,10 +6,10 @@ import lombok.Data;
 
 @Data
 @Component
-public class BoardTypeVO {
+public class BoardCategoryVO {
 	
-    private String board_type; 
+    private String board_id; 
     private String board_name; 
-    private String board_type_regdate; 
+    private String board_category_regdate; 
     
 }

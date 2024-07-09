@@ -2,6 +2,55 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-   
+
 <mapper namespace="com.Commu_back.mapper.ReplyMapper">
+
+	<!-- 댓글 총 개수 조회 -->
+	<select id="">
+		<![CDATA[
+		
+		]]>
+	</select>
+	
+	<!-- 댓글 리스트 조회 -->
+	<select id="">
+		<![CDATA[
+			
+		]]>
+	</select>
+	
+	<!-- 댓글 추가 -->
+	<insert id="">
+		<![CDATA[
+		merge into reply_tb 
+		using dual 
+		on (#{reply_no} > 0) 
+		when matched then 
+		update set 	board_content = #{board_content}, 
+					board_updatedate = sysdate 
+		where reply_no = #{reply_no} and board_no = #{board_no} and board_type = #{board_type}  
+		when not matched then 
+		insert into reply_tb(reply_no, user_no, board_no, board_type, reply_group, reply_dept, reply_content) 
+		values(
+			(select nvl(max(reply_no), 0) + 1 
+			from reply_tb 
+			where board_no = #{board_no} 
+			and board_type = #{board_type}), 
+			(select user_no 
+			from user_tb 
+			where user_id = #{user_id}), 
+			#{board_no}, #{board_type}, #{reply_group}, #{reply_dept}, #{reply_content} 
+		)
+		]]>
+	</insert>
+	
+	<!-- 댓글 삭제 -->
+	<delete id="">
+		<![CDATA[
+			delete from reply_tb 
+			where reply_no = #{reply_no} 
+			and board_no = #{board_no} 
+			and board_type = #{board_type} 
+		]]>
+	</delete>
 </mapper>

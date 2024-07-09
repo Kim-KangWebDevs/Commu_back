@@ -8,7 +8,7 @@ import lombok.Data;
 @Component
 public class BoardVO {
 	
-    private String board_type; 
+    private String board_id; 
     private int board_no; 
     private String board_title; 
     private int user_no;

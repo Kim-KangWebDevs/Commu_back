@@ -9,7 +9,7 @@ import lombok.Data;
 public class ReplyVO {
 
 	private int board_no; 
-    private String board_type; 
+    private String board_id; 
     private int reply_no;
     private int user_no;
     private int reply_group;

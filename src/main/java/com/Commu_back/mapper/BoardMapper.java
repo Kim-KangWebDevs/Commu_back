@@ -11,30 +11,35 @@ import com.Commu_back.vo.BoardVO;
 @Mapper
 public interface BoardMapper {
 
-	// 카테고리 목록 확인
-	public ArrayList<Map<String, String>> selectCategoryList(String board_type) throws Exception;
+	// 카테고리 목록 조회
+	public ArrayList<Map<String, String>> selectCategoryList(@Param("board_id") String board_id) throws Exception;
 
 	// 카테고리 추가
-	public int insertCategory(@Param("board_type") String board_type, @Param("board_name") String board_name)
+	public int insertCategory(@Param("board_id") String board_id, @Param("board_name") String board_name)
 			throws Exception;
 
 	// 카테고리 삭제
-	public int deleteCategory(String board_type) throws Exception;
+	public int deleteCategory(@Param("board_id") String board_id) throws Exception;
 
-	// 카테고리 한글명 확인
-	public String selectCategoryName(String board_type) throws Exception;
+	// 카테고리 이름 조회
+	public String selectCategoryName(@Param("board_id") String board_id) throws Exception;
 
-	// 게시글 목록 확인
-	public ArrayList<BoardVO> selectBoardList(String board_type) throws Exception;
+	// 조회수 증가
+	public int updateBoardViews(@Param("board_no") int board_no) throws Exception;
 
-	// 게시글 확인
-	public BoardVO selectBoard(@Param("board_type") String board_type, @Param("board_no") int board_no)
-			throws Exception;
+	// 게시글 총 개수 조회
+	public int selectBoardCount(Map<String, Object> board_map) throws Exception;
+
+	// 게시글 목록 조회
+	public ArrayList<Map<String, Object>> selectBoardList(Map<String, Object> board_map) throws Exception;
+
+	// 게시글 조회
+	public BoardVO selectBoard(@Param("board_no") int board_no) throws Exception;
 
 	// 게시글 추가
 	public int insertBoard(BoardVO boardVO) throws Exception;
 
 	// 게시글 삭제
-	public int deleteBoard(@Param("board_type") String board_type, @Param("board_no") int board_no) throws Exception;
+	public int deleteBoard(@Param("board_no") int board_no) throws Exception;
 
 }

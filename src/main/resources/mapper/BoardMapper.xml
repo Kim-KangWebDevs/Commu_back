@@ -5,65 +5,190 @@
   
 <mapper namespace="com.Commu_back.mapper.BoardMapper">
 
-	<!-- 카테고리 리스트 조회 -->
-	<select id="selectCategoryList" resultMap="hashmap">
+	<!-- 카테고리 목록 조회 -->
+	<select id="selectCategoryList" resultType="hashmap">
 		<![CDATA[	
-			select *  
+			-- 게시판 카테고리 전체조회 및 검색기능 
+			select board_name 
 			from board_category_tb 
-			where board_type = #{board_type} 
 		]]>
+			<choose>
+				<when test="board_id == null and !test.equals('') " />
+				<otherwise>
+					where board_id like '%'||#{board_id}||'%' 
+				</otherwise>
+			</choose>
 	</select>
 
 	<!-- 카테고리 추가 -->
 	<insert id="insertCategory">
 		<![CDATA[
 			insert 
-			into board_category_tb(board_type, board_name) 
-			values(#{board_type}, #{board_name}) 
+			into board_category_tb(board_id, board_name) 
+			values(#{board_id}, #{board_name}) 
 		]]>
 	</insert>
 	
 	<!-- 카테고리 삭제 -->
-	<delete id="deleteCategory" parameterType="String">
+	<delete id="deleteCategory">
 		<![CDATA[
 			delete 
 			from board_category_tb 
-			where board_type = #{board_type}  
+			where board_id = #{board_id}  
 		]]>
 	</delete>
 	
 	<!-- 카테고리 이름 조회 -->
-	<select id="selectCategoryName" parameterType="String" resultType="String">
+	<select id="selectCategoryName" resultType="String">
 		<![CDATA[
-			
+			select board_name 
+			from board_category 
+			where board_id = #{board_id} 
 		]]>
 	</select>
 	
-	<!-- 게시글 리스트 조회 -->
-	<select id="selectBoardList" resultType="com.community.vo.BoardVO">>
+	<!-- 조회수 증가 -->
+	<insert id="updateBoardView">
+		<![CDATA[
+			update board_tb 
+			set board_views = board_views + 1 
+			where board_no = #{board_no} 
+		]]>
+	</insert>
+	
+	<!-- 게시글 총 개수 조회 -->
+	<select id="selectBoardCount" parameterType="hashmap" resultType="int">
+		<![CDATA[
+			-- 
+				select board_id, board_no, board_title, user_no, board_views, board_good, board_regdate
+				from board_tb 
+				]]>
+					<choose>
+						<when test="board_id != 'all'">
+							where board_id = #{board_id} 
+						</when>
+						<otherwise>
+							where 1 = 1 
+						</otherwise>
+					</choose>
+					<choose>
+						<when test="keyword_type == 'all' " />
+						<when test="keyword_type == 'title' ">
+							and board_title like '%'||#{keyword}||'%'
+						</when>
+						<when test="keyword_type == 'content' ">
+							and board_content like '%'||#{keyword}||'%'
+						</when>
+						<when test="keyword_type == 'writer' ">
+							and '%'||#{keyword}||'%' like (
+								select user_chr 
+								from user_tb 
+								where user_no = '%'||#{keyword}||'%' 
+							)
+						</when>
+						<otherwise />
+					</choose>
+				<![CDATA[ 
+					order by board_no desc
+				)t 
+		]]>
+	</select>
+	<!-- 게시글 목록 조회 -->
+	<select id="selectBoardList" parameterType="hashmap" resultType="hashmap">
 		<![CDATA[
 			
+			-- 3차, 순번으로 정렬된 검색결과를 parameter 값에 따라 조회 
+			-- 작성자의 별명을 뷰에 추가하기 위해 유저 테이블과 innerjoin 
+			-- 이후 페이징을 위해 설정된 row 개수만큼 column을 반환   
+			select board_id, board_no, board_title, user_chr, board_views, board_good, board_regdate, 
+			(select count(*) from reply_tb where board_no = t.board_no)reply_count 
+			from (
+				-- 2차, 페이징을 위한 순번 부여 
+				select rownum rnum, board_id, board_no, board_title, user_no, board_views, board_good, board_regdate, 
+				from (
+					-- 1차, 타입별 키워드검색 후 글번호의 역순으로 정렬되지 않은 결과를 재정렬  
+					-- 통합검색 및 카테고리별 검색 지원 
+					select board_id, board_no, board_title, user_no, board_views, board_good, board_regdate
+					from board_tb 
+					]]>
+						<choose>
+							<when test="board_id != 'all'">
+								where board_id = #{board_id} 
+							</when>
+							<otherwise>
+								where 1 = 1 
+							</otherwise>
+						</choose>
+						<choose>
+							<when test="keyword_type == 'all' " />
+							<when test="keyword_type == 'title' ">
+								and board_title like '%'||#{keyword}||'%'
+							</when>
+							<when test="keyword_type == 'content' ">
+								and board_content like '%'||#{keyword}||'%'
+							</when>
+							<when test="keyword_type == 'writer' ">
+								and '%'||#{keyword}||'%' like (
+									select user_chr 
+									from user_tb 
+									where user_no = '%'||#{keyword}||'%' 
+								)
+							</when>
+							<otherwise />
+						</choose>
+					<![CDATA[ 
+						order by board_no desc
+				)t 
+			) inner join user_tb  
+			on board_tb.user_no = user_tb.user_no 
+			where rnum between #{startRow} and #{endRow} 
 		]]>
 	</select>
 	
 	<!-- 게시글 조회 -->
-	<select id="selectBoard" resultType="com.Commu_back.vo.BoardVO">
+	<select id="selectBoard" resultType="hashmap">
 		<![CDATA[
-			
+			select board_title, user_chr, board_content, board_regdate, board_good, board_bad
+			from board_tb inner join user_tb 
+			on board_tb.user_no = user_tb.user_no 
+			where board_no = #{board_no} 
 		]]>
 	</select>
 	
 	<!-- 게시글 추가 -->
-	<insert id="insertBoard" parameterType="com.Commu_back.vo.BoardVO">
+	<insert id="insertBoard"
+		parameterType="com.Commu_back.vo.BoardVO">
 		<![CDATA[
-			
+			merge into board_tb 
+			using dual 
+			on (#{board_no} > 0) 
+			-- 기존 게시글이 존재할시 글 갱신 ++ user_no = #{user_no}???
+			when matched then 
+			update set board_title = #{board_title}, 
+						board_content = #{board_content}, 
+						board_updatedate = sysdate 
+			where board_no = #{board_no} 
+			-- 기존 게시글이 존재하지 않을시 글 삽입
+			when not matched then 
+			insert (board_title, board_content, board_id, user_no) 
+			values (#{board_title}, #{board_content}, #{board_id}, (select user_no from user_tb where user_chr = #{user_chr})) 
 		]]>
+		<selectKey resultType="int" keyProperty="board_no"
+			order="AFTER">
+			<![CDATA[	
+				-- 기존 글이 존재하지 않는 경우 이미지 업로드시 필요한 글 번호를 반환 
+				select max(board_no) 
+				from board_tb 
+				where board_id = #{board_id} 
+			]]>
+		</selectKey>
 	</insert>
 	
 	<!-- 게시글 삭제 -->
 	<delete id="deleteBoard">
 		<![CDATA[
-			
+			delete from board_tb 
+			where board_no = #{board_no} 
 		]]>
 	</delete>
 
