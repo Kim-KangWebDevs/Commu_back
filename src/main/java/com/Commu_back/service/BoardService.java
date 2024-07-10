@@ -1,5 +1,6 @@
 package com.Commu_back.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,8 @@ import com.Commu_back.vo.PagingVO;
 public class BoardService {
 
 	private BoardMapper boardmapper;
-
+	ObjectMapper objectMapper = new ObjectMapper();
+	
 	@Autowired
 	public BoardService(BoardMapper boardmapper) {
 		this.boardmapper = boardmapper;
@@ -79,14 +81,18 @@ public class BoardService {
 		return boardmapper.selectBoard(board_no);
 	}
 
-	public int addBoard(BoardVO boardVO) throws Exception {
-
-		return boardmapper.insertBoard(boardVO);
+	public int addBoard(BoardVO boardVO, String user_id) throws Exception {
+	
+		Map<String, Object> board_map = objectMapper.convertValue(boardVO, HashMap.class);
+		
+		board_map.put("user_id", user_id);
+		
+		return boardmapper.insertBoard(board_map);
 	}
 
-	public int removeBoard(int board_no) throws Exception {
+	public int removeBoard(int board_no, String user_id) throws Exception {
 
-		return boardmapper.deleteBoard(board_no);
+		return boardmapper.deleteBoard(board_no, user_id);
 	}
 
 }

@@ -8,7 +8,7 @@
 	<!-- 카테고리 총 개수 조회 -->
 	<select id="selectCategoryCount" resultType="int">
 		<![CDATA[	
-			-- 게시판 카테고리 전체조회 및 검색기능 
+			-- 페이징시 게시판 카테고리 총 개수 조회
 			select max(board_id) 
 			from board_category_tb 
 		]]>
@@ -115,9 +115,11 @@
 			select board_id, board_no, board_title, user_chr, board_views, board_good, board_regdate, 
 			(select count(*) from reply_tb where board_no = t.board_no)reply_count 
 			from (
+				
 				-- 2차, 페이징을 위한 순번 부여 
 				select rownum rnum, board_id, board_no, board_title, user_no, board_views, board_good, board_regdate, 
 				from (
+					
 					-- 1차, 타입별 키워드검색 후 글번호의 역순으로 정렬되지 않은 결과를 재정렬  
 					-- 통합검색 및 카테고리별 검색 지원 
 					select board_id, board_no, board_title, user_no, board_views, board_good, board_regdate
@@ -151,7 +153,9 @@
 					<![CDATA[ 
 						order by board_no desc
 				)t 
+				
 			) inner join user_tb  
+			
 			on board_tb.user_no = user_tb.user_no 
 			where rnum between #{startRow} and #{endRow} 
 		]]>
@@ -169,21 +173,30 @@
 	
 	<!-- 게시글 추가 -->
 	<insert id="insertBoard"
-		parameterType="com.Commu_back.vo.BoardVO">
+		parameterType="hashmap">
 		<![CDATA[
 			merge into board_tb 
 			using dual 
 			on (#{board_no} > 0) 
-			-- 기존 게시글이 존재할시 글 갱신 ++ user_no = #{user_no}???
+			
+			-- 기존 게시글이 존재할시 글 갱신 
+			-- 인증값으로 받아온 유저 아이디를 유저 테이블에서 유저 번호로 조회 후
+			-- 해당 게시글의 작성자와 같은지 매칭  
 			when matched then 
 			update set board_title = #{board_title}, 
 						board_content = #{board_content}, 
 						board_updatedate = sysdate 
 			where board_no = #{board_no} 
+			and user_no = (
+				select user_no  
+				from user_tb 
+				where user_id = #{user_id}
+			}
+			
 			-- 기존 게시글이 존재하지 않을시 글 삽입
 			when not matched then 
 			insert (board_title, board_content, board_id, user_no) 
-			values (#{board_title}, #{board_content}, #{board_id}, (select user_no from user_tb where user_chr = #{user_chr})) 
+			values (#{board_title}, #{board_content}, #{board_id}, #{user_no}) 
 		]]>
 		<selectKey resultType="int" keyProperty="board_no"
 			order="AFTER">
@@ -199,8 +212,15 @@
 	<!-- 게시글 삭제 -->
 	<delete id="deleteBoard">
 		<![CDATA[
+			-- 1. 인증값으로 받아온 회원 아이디를 유저 테이블과 매칭해 유저 번호를 불러옴
+			-- 2. 게시글 테이블의 유저 번호와 조회된 번호가 같지 않으면 0을 반환 (성공시 1을 반환)
 			delete from board_tb 
 			where board_no = #{board_no} 
+				and user_no = ( 
+					select user_no 
+					from user_tb 
+					where user_id = #{user_id} 
+				)
 		]]>
 	</delete>
 

@@ -145,16 +145,19 @@ public class BoardController {
 	// 게시글 추가 및 수정
 	@PostMapping("/boardwrite.do")
 	public ResponseEntity<Integer> boardWrite(@RequestBody BoardVO boardVO) throws Exception {
-
-		return new ResponseEntity<>(boardservice.addBoard(boardVO), HttpStatus.OK);
+		
+		String user_id = "user001";
+		return new ResponseEntity<>(boardservice.addBoard(boardVO, user_id), HttpStatus.OK);
 	}
 	
 	// 게시글 삭제 
 	@GetMapping("/boardremove.do")
 	@ResponseBody
 	public ResponseEntity<Integer> boardRemove(@RequestParam("no") int board_no) throws Exception {
-
-		return new ResponseEntity<>(boardservice.removeBoard(board_no), HttpStatus.OK);
+		
+		String user_id = "user001"; 
+		//session.getUserId();
+		return new ResponseEntity<>(boardservice.removeBoard(board_no, user_id), HttpStatus.OK);
 	}
 
 }

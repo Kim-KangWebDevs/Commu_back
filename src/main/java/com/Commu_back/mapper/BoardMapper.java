@@ -43,9 +43,9 @@ public interface BoardMapper {
 	public BoardVO selectBoard(@Param("board_no") int board_no) throws Exception;
 
 	// 게시글 추가
-	public int insertBoard(BoardVO boardVO) throws Exception;
+	public int insertBoard(Map<String, Object> board_map) throws Exception;
 
 	// 게시글 삭제
-	public int deleteBoard(@Param("board_no") int board_no) throws Exception;
+	public int deleteBoard(@Param("board_no") int board_no, @Param("user_id") String user_id) throws Exception;
 
 }
