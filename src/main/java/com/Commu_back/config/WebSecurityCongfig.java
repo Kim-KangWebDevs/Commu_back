@@ -20,6 +20,16 @@ public class WebSecurityCongfig{
 	
 	@Bean
     public SecurityFilterChain filterChain(HttpSecurity http)throws Exception {
+		// 인가(접근권한) 설정
+		
+		// 사이트 위변조 요청 방지
+//		http
+//		.csrf().disable();		
+		// 로그인 설정
+				
+		// 로그아웃 설정
+				
+		// 사용자 인증 처리 컴포넌트 서비스 등록
 		http.userDetailsService(authService);
 		return http.build();
 	} 

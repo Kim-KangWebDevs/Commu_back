@@ -14,7 +14,8 @@ public class AuthService implements UserDetailsService{
 	
 	@Autowired
 	private UserMapper userMapper;
-
+	
+	//가입하지 않은 계정으로 로그인 시도 시
 	@Override
 	public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
 		UserVO userVo = userMapper.selectUserInfo(userId);

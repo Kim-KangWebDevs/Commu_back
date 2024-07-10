@@ -27,13 +27,13 @@ public class UserController {
 	@Autowired
 	private AuthService authService;
 	
-	//전체사용자
+	//1.전체사용자
 	@GetMapping("/user")
 	public String CollUser(ModelMap map,
 			@RequestParam("pageNum") int pageNum,
 			@RequestParam("pageSize") int pageSize) {
-
-		List<UserVO> list = userService.getselectUsersAll(pageNum,pageSize);
+		
+		List<UserVO> list = userService.getSelectUsersAll(pageNum,pageSize);
 		PageInfo<UserVO> pageInfo = new PageInfo<UserVO>(list);
 		
 		map.addAttribute("pageHelper", pageInfo);
@@ -41,19 +41,19 @@ public class UserController {
 		return "user";
 	}
 	
-	//특정 유저 정보 가져오기
+	//2.특정 유저 정보 가져오기
 	@GetMapping("/user/{userNo}")
 	@ResponseBody
 	public UserVO callUserNo(@PathVariable("userNo")int userNo) {
-		return userService.getselectUserNo(userNo);
+		return userService.getSelectUserNo(userNo);
 	}  
 	
-	//특정 유저 검색
+	//9.특정 유저 검색
 	@GetMapping("/user/search")
 	public String CollUserSearch(ModelMap map, @RequestParam("search") String search,
 			@RequestParam("pageNum") int pageNum,
 			@RequestParam("pageSize") int pageSize) {
-		List<UserVO> list = userService.getselectSearchUser(search, pageNum, pageSize);
+		List<UserVO> list = userService.getSelectSearchUser(search, pageNum, pageSize);
 		PageInfo<UserVO> pageInfo = new PageInfo<UserVO>(list);
 		map.addAttribute("pageHelper", pageInfo);
 		map.addAttribute("search", search);
@@ -66,7 +66,7 @@ public class UserController {
 	//유저추가
 	
 	
-	//유저업데이트
+	//7.유저업데이트
 	@CrossOrigin
 	@ResponseBody
 	@PatchMapping("/user/{userNo}")

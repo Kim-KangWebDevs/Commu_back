@@ -12,31 +12,31 @@ import com.Commu_back.vo.UserVO;
 @Mapper
 public interface UserMapper {
 	
-	//전체 사용자 조회
+	//1.전체 사용자 조회
 	public List<UserVO> selectUsersAll();
 	
-	//사용자 조회 번호
+	//2.사용자 번호 조회 
 	public UserVO selectUserNo(@Param("userId") int userNo);
 	
-	//특정 사용자 조회
+	//3.특정 사용자 조회
 	public UserVO selectUserInfo(@Param("userId") String userId);
 	
-	//특정 사용자 권환 조회
+	//4.특정 사용자 권환 조회
 	public List<AuthVO> selectUserAuth(@Param("userId") String userId);
 	
-	//사용자 권환 추가
+	//5.사용자 권환 추가
 	public int insertAuth(@Param("userNo")int userNo,@Param("roleNo")int roleNo);
 	
-	//사용자 추가
+	//6.사용자 추가
 	public int insertUser(UserVO userVo);
 	
-	//사용자 수정
+	//7.사용자 수정
 	public int updateUser(@RequestBody UserVO userVO);
 	
-	//사용자 제거
+	//8.사용자 제거
 	public int deleteUser(@Param("userNo")int userNo);
 	
-	//사용자 검색
+	//9.사용자 검색
 	public List<UserVO> selectSearchUser(String Search);
 	
 }
