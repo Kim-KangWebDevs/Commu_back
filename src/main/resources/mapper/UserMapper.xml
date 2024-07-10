@@ -140,4 +140,26 @@
 			user_no = #{userNo}
 	</select>
 	
+	<!-- 유저검색 -->
+	<select id="selectSearchUser" resultType="UsersVO">
+		SELECT
+			u.user_no AS userNo,
+			u.user_id AS userId,
+			u.user_pw AS userPw,
+			u.user_chr AS userChr,
+			u.user_email AS userEmail,
+			DATE_FORMAT(u.user_regdate, "%Y-%m-%d") AS userRegdate,
+			u.file_name AS fileName,
+			r.role_desc AS roleDesc
+		FROM 
+			user_tb u INNER JOIN user_role_tb ur
+			ON
+			u.user_no = ur.user_no
+			INNER JOIN role_tb r
+			ON
+			ur.role_No =r.role_No
+		WHERE 
+			u.user_id LIKE '%'||#{search}||'%' or u.user_chr LIKE '%'||#{search}||'%'
+	</select>
+	
 </mapper>

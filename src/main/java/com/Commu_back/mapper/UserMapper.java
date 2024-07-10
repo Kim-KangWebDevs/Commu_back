@@ -36,7 +36,7 @@ public interface UserMapper {
 	//사용자 제거
 	public int deleteUser(@Param("userNo")int userNo);
 	
+	//사용자 검색
+	public List<UserVO> selectSearchUser(String Search);
 	
-	
-
 }

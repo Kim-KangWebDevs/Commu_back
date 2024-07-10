@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.Commu_back.service.AuthService;
 import com.Commu_back.service.UserService;
 import com.Commu_back.vo.UserVO;
-
+import com.github.pagehelper.PageInfo;
 
 @Controller
 public class UserController {
@@ -28,7 +29,15 @@ public class UserController {
 	
 	//전체사용자
 	@GetMapping("/user")
-	public String CollUser(String user) {
+	public String CollUser(ModelMap map,
+			@RequestParam("pageNum") int pageNum,
+			@RequestParam("pageSize") int pageSize) {
+
+		List<UserVO> list = userService.getselectUsersAll(pageNum,pageSize);
+		PageInfo<UserVO> pageInfo = new PageInfo<UserVO>(list);
+		
+		map.addAttribute("pageHelper", pageInfo);
+
 		return "user";
 	}
 	
@@ -41,7 +50,13 @@ public class UserController {
 	
 	//특정 유저 검색
 	@GetMapping("/user/search")
-	public String CollUserSearch(@RequestParam("search") String search) {
+	public String CollUserSearch(ModelMap map, @RequestParam("search") String search,
+			@RequestParam("pageNum") int pageNum,
+			@RequestParam("pageSize") int pageSize) {
+		List<UserVO> list = userService.getselectSearchUser(search, pageNum, pageSize);
+		PageInfo<UserVO> pageInfo = new PageInfo<UserVO>(list);
+		map.addAttribute("pageHelper", pageInfo);
+		map.addAttribute("search", search);
 		return "user";
 	}
 	

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.Commu_back.mapper.UserMapper;
 import com.Commu_back.vo.AuthVO;
 import com.Commu_back.vo.UserVO;
+import com.github.pagehelper.PageHelper;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -34,7 +35,8 @@ public class UserService {
 	}
 	
 	//전체조회
-	public List<UserVO> getselectUsersAll(){
+	public List<UserVO> getselectUsersAll(int pageNum,int pageSize){
+		PageHelper.startPage(pageNum, pageSize);
 		return userMapper.selectUsersAll();
 	}
 	
@@ -60,6 +62,12 @@ public class UserService {
 	public int getdeleteUser(int userNo) {
 		return userMapper.deleteUser(userNo);
 		
+	}
+	
+	//유저검색
+	public List<UserVO> getselectSearchUser(String search,int pageNum,int pageSize){
+		PageHelper.startPage(pageNum, pageSize);
+		return userMapper.selectSearchUser(search);
 	}
 	
 
