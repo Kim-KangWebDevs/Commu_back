@@ -179,7 +179,7 @@
 			using dual 
 			on (#{board_no} > 0) 
 			
-			-- 기존 게시글이 존재할시 글 갱신 
+			-- 기존 게시글이 있을 때 글 갱신 
 			-- 인증값으로 받아온 유저 아이디를 유저 테이블에서 유저 번호로 조회 후
 			-- 해당 게시글의 작성자와 같은지 매칭  
 			when matched then 
@@ -193,7 +193,7 @@
 				where user_id = #{user_id}
 			}
 			
-			-- 기존 게시글이 존재하지 않을시 글 삽입
+			-- 기존 게시글이 없을 때 글 추가 
 			when not matched then 
 			insert (board_title, board_content, board_id, user_no) 
 			values (#{board_title}, #{board_content}, #{board_id}, #{user_no}) 

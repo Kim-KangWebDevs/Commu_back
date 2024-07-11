@@ -1,6 +1,5 @@
 package com.Commu_back.controller;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -35,20 +34,15 @@ public class BoardController {
 		this.boardservice = boardservice;
 	}
 
-	// page link methods
-	/*
-	 * link to board category page
-	 */
+	// 페이지 연결 메소드
+	// 게시판 카테고리 페이지 
 	@GetMapping("/category")
 	public String boardCategory(@RequestParam("id") String board_id) throws Exception {
 
 		return "/Board/CategoryPage";
 	}
 
-	/*
-	 * link to search & detail page id param must be included *optional(no, keytype,
-	 * keyword, page)
-	 */
+	// 검색 페이지(게시글, 게시글 목록 포함)
 	@GetMapping("/search")
 	public String boardSearch(@RequestParam("id") String board_id,
 			@RequestParam(value = "no", required = false) Integer board_no,
@@ -77,17 +71,15 @@ public class BoardController {
 		return "Board/SearchPage";
 	}
 
-	/*
-	 * link to board write page id parameter must be included
-	 */
+	// 게시글 작성 및 수정 페이지 
 	@GetMapping("/write")
 	public String boardWrite(@RequestParam("id") String board_id) throws Exception {
 
 		return "/Board/WritePage";
 	}
 
-	// get response methods
-	// get board's category list
+	// 데이터 응답 페이지 
+	// 게시판 카테고리 리스트 조회
 //	@GetMapping("/listcategory.do")
 //	@ResponseBody
 //	public ResponseEntity<Map<String, Object>> listCategory(@RequestParam("id") String board_id) throws Exception {
@@ -98,30 +90,30 @@ public class BoardController {
 //		return new ResponseEntity<>(categoryMap, HttpStatus.OK);
 //	}
 
-	// add board's category
-	@GetMapping("/addcategory.do")
-	@ResponseBody
-	public ResponseEntity<Integer> addCategory(@RequestParam("id") String board_id,
-			@RequestParam("name") String board_name) throws Exception {
+	// 게시판 카테고리 추가 
+//	@GetMapping("/addcategory.do")
+//	@ResponseBody
+//	public ResponseEntity<Integer> addCategory(@RequestParam("id") String board_id,
+//			@RequestParam("name") String board_name) throws Exception {
+//
+//		return new ResponseEntity<>(1, HttpStatus.OK);
+//	}
 
-		return new ResponseEntity<>(1, HttpStatus.OK);
-	}
+	// 게시판 카테고리 삭제 
+//	@GetMapping("/removecategory.do")
+//	@ResponseBody
+//	public ResponseEntity<Integer> removeCategory(@RequestParam("id") String board_id) throws Exception {
+//
+//		return new ResponseEntity<>(1, HttpStatus.OK);
+//	}
 
-	// delete board's category
-	@GetMapping("/removecategory.do")
-	@ResponseBody
-	public ResponseEntity<Integer> removeCategory(@RequestParam("id") String board_id) throws Exception {
-
-		return new ResponseEntity<>(1, HttpStatus.OK);
-	}
-
-	// 카테고리 이름 조회 
-	@GetMapping("/namecategory.do")
-	@ResponseBody
-	public ResponseEntity<String> nameCategory(@RequestParam("id") String board_id) throws Exception {
-
-		return new ResponseEntity<>("1", HttpStatus.OK);
-	}
+	// 게시판 카테고리 이름 조회 
+//	@GetMapping("/namecategory.do")
+//	@ResponseBody
+//	public ResponseEntity<String> nameCategory(@RequestParam("id") String board_id) throws Exception {
+//
+//		return new ResponseEntity<>("1", HttpStatus.OK);
+//	}
 
 	// 게시글 리스트 조회
 	@GetMapping("/boardlist.do")

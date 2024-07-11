@@ -1,6 +1,5 @@
 package com.Commu_back.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.Commu_back.mapper.BoardMapper;
 import com.Commu_back.vo.BoardVO;
 import com.Commu_back.vo.PagingVO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class BoardService {
@@ -33,15 +33,15 @@ public class BoardService {
 //		return boardmapper.selectCategoryList(board_id);
 //	}
 
-	public int addCategory(String board_id, String board_name) throws Exception {
-
-		return boardmapper.insertCategory(board_id, board_name);
-	}
+//	public int addCategory(String board_id, String board_name) throws Exception {
+//
+//		return boardmapper.insertCategory(board_id, board_name);
+//	}
 	
-	public int removeCategory(String board_id) throws Exception {
-
-		return boardmapper.deleteCategory(board_id);
-	}
+//	public int removeCategory(String board_id) throws Exception {
+//
+//		return boardmapper.deleteCategory(board_id);
+//	}
 	
 	// 카테고리 이름 조회
 	public String findBoardName(String board_id) throws Exception {
