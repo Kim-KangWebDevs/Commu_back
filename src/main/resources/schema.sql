@@ -21,14 +21,14 @@ create table board_category_tb(
 
 --댓글
 create table reply_tb(
-    board_no number(16) not null,
-    board_id varchar2(32) not null,
-    reply_no number(16) generated always as identity,
+    board_no number(16) not null, 
+    reply_no number(16) generated always as identity, 
     user_no number(16) not null,
     reply_group number(16) not null,
     reply_dept number(2) default 1 not null,
     reply_content varchar2(128) not null,
     reply_regdate date default sysdate,
+    reply_updatedate date default sysdate,
     constraint reply_pk primary key(board_no, reply_no) 
 );
 
