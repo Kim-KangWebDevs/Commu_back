@@ -6,7 +6,7 @@
 <mapper namespace="com.Commu_back.mapper.UserMapper">
 
 	<!-- 특정 사용자 조회 -->
-	<select id="selectUserInfo" resultType="UserVO">
+	<select id="selectUserInfo" resultType="com.Commu_back.vo.UserVO">
 		SELECT
 			user_no AS userNo,
 			user_id AS userId,
@@ -22,7 +22,7 @@
 	</select>
 	
 	<!-- 사용자 권환 조회 -->
-	<select id="selectUserAuth" resultType="UserVO">
+	<select id="selectUserAuth" resultType="com.Commu_back.vo.UserVO">
 		SELECT
 			r.role_no AS roleNo,
 			r.role_name AS roleName,
@@ -39,7 +39,7 @@
 	</select>
 	
 	<!-- 전체 사용자 조회 -->
-	<select id="selectUsersAll" resultType="UserVO">
+	<select id="selectUsersAll" resultType="com.Commu_back.vo.UserVO">
 		SELECT
 			u.user_no AS userNo,
 			u.user_id AS userId,
@@ -125,7 +125,7 @@
 	</delete>
 	
 	<!-- 특정사용자 조회 -->
-	<select id="selectUserNo" resultType="UsersVO">
+	<select id="selectUserNo" resultType="com.Commu_back.vo.UserVO">
 		SELECT
 			user_no AS userNo,
 			user_id AS userId,
@@ -141,7 +141,7 @@
 	</select>
 	
 	<!-- 유저검색 -->
-	<select id="selectSearchUser" resultType="UsersVO">
+	<select id="selectSearchUser" resultType="com.Commu_back.vo.UserVO">
 		SELECT
 			u.user_no AS userNo,
 			u.user_id AS userId,
