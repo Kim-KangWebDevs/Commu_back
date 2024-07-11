@@ -16,11 +16,11 @@ import com.Commu_back.vo.ReplyVO;
 @Controller
 public class ReplyController {
 
+	// 댓글 목록 조회
 	@PostMapping("/replylist.do")
 	@ResponseBody
-	public ResponseEntity<ArrayList<ReplyVO>> replyList(@RequestParam("btype") String board_type,
-			@RequestParam("no") String board_no, @RequestParam("order") String reply_order,
-			@RequestParam("page") String reply_page) throws Exception {
+	public ResponseEntity<ArrayList<ReplyVO>> replyList(@RequestParam("no") String board_no,
+			@RequestParam("order") String reply_order, @RequestParam("page") String reply_page) throws Exception {
 
 		ArrayList<ReplyVO> replyList = new ArrayList<ReplyVO>();
 
@@ -32,8 +32,8 @@ public class ReplyController {
 
 	@PostMapping("/replywrite.do")
 	@ResponseBody
-	public ResponseEntity<Integer> writereply(@RequestParam("btype") String board_type,
-			@RequestParam("no") String board_no) throws Exception {
+	public ResponseEntity<Integer> writereply(String board_type, @RequestParam("rno") String board_no)
+			throws Exception {
 
 		return new ResponseEntity<>(1, HttpStatus.OK);
 
@@ -41,8 +41,7 @@ public class ReplyController {
 
 	@PostMapping("/replyremove.do")
 	@ResponseBody
-	public ResponseEntity<Integer> removeList(@RequestParam("btype") String board_type,
-			@RequestParam("rno") String reply_no) throws Exception {
+	public ResponseEntity<Integer> removeList(@RequestParam("rno") String reply_no) throws Exception {
 
 		return new ResponseEntity<>(1, HttpStatus.OK);
 
