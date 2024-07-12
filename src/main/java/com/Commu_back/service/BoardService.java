@@ -18,7 +18,7 @@ public class BoardService {
 
 	private BoardMapper boardmapper;
 	
-	private DataType datatype;
+	private DataType dataType;
 	
 	ObjectMapper objectMapper = new ObjectMapper();
 	
@@ -37,10 +37,10 @@ public class BoardService {
 //		return boardmapper.selectCategoryList(board_id);
 //	}
 
-//	public int addCategory(String board_id, String board_name) throws Exception {
-//
-//		return boardmapper.insertCategory(board_id, board_name);
-//	}
+	public int addCategory(String board_id, String board_desc) throws Exception {
+
+		return boardmapper.insertCategory(board_id, board_desc);
+	}
 	
 //	public int removeCategory(String board_id) throws Exception {
 //
@@ -58,10 +58,10 @@ public class BoardService {
 		
 		// 1. view에서 받아온 현재 페이지 값이 유효한지 검증 후 숫자형으로 변환 후
 		// 페이징을 위한 해당 검색의 게시글 총합 개수 조회 및 페이징VO 생성 
-		PagingVO pagingVO = new PagingVO(boardmapper.selectBoardCount(board_id, target, keyword), 20, datatype.isDigit(page));
+		PagingVO pagingVO = new PagingVO(boardmapper.selectBoardCount(board_id, target, keyword), 20, dataType.isDigit(page));
 		
 		// 3. DB 검색 후 결과 조회    
-		Map<String, Object> board_map = new HashMap<String, Object>();
+		Map<String, Object> board_map = new HashMap<>();
 		board_map.put("board_type", board_id);
 		board_map.put("keyword_type", target);
 		board_map.put("keyword", keyword);
@@ -78,9 +78,9 @@ public class BoardService {
 		
 	}
 
-	public BoardVO fineBoard(int board_no) throws Exception {
+	public Map<String, Object> fineBoard(String board_no) throws Exception {
 
-		return boardmapper.selectBoard(board_no);
+		return boardmapper.selectBoard(dataType.isDigit(board_no));
 	}
 
 	public int addBoard(BoardVO boardVO, String user_id) throws Exception {
@@ -94,7 +94,7 @@ public class BoardService {
 
 	public int removeBoard(String board_no, String user_id) throws Exception {
 
-		return boardmapper.deleteBoard(datatype.isDigit(board_no), user_id);
+		return boardmapper.deleteBoard(dataType.isDigit(board_no), user_id);
 	}
 
 }

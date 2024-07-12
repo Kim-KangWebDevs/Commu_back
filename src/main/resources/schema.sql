@@ -2,8 +2,8 @@
 create table board_tb(
     board_no number(16) generated always as identity primary key,
     board_id varchar2(32) not null, 
-    board_title varchar2(64) not null, 
     user_no number(16) not null, 
+    board_title varchar2(64) not null,  
     board_content varchar2(2048) not null, 
     board_views number(16) default 0, 
     board_good number(16) default 0, 
@@ -62,4 +62,10 @@ create table role_tb(
     role_no number default 3 primary key,
     role_name varchar(32) not null constraint role_name_uq unique, 
     role_desc varchar(32) not null constraint role_desc_uq unique
+);
+
+-- 유저 권한 
+create table user_role_tb(
+     user_no number(16) not null primary key,
+     role_no number(16) default 3 
 );

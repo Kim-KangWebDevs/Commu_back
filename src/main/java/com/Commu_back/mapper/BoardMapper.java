@@ -6,8 +6,6 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.Commu_back.vo.BoardVO;
-
 @Mapper
 public interface BoardMapper {
 	
@@ -20,8 +18,8 @@ public interface BoardMapper {
 	// String board_id) throws Exception;
 
 	// 카테고리 추가
-//	public int insertCategory(@Param("board_id") String board_id, @Param("board_name") String board_name)
-//			throws Exception;
+	public int insertCategory(@Param("board_id") String board_id, @Param("board_desc") String board_desc)
+			throws Exception;
 
 	// 카테고리 삭제
 //	public int deleteCategory(@Param("board_id") String board_id) throws Exception;
@@ -40,7 +38,7 @@ public interface BoardMapper {
 	public ArrayList<Map<String, Object>> selectBoardList(Map<String, Object> board_map) throws Exception;
 
 	// 게시글 조회
-	public BoardVO selectBoard(@Param("board_no") int board_no) throws Exception;
+	public Map<String, Object> selectBoard(@Param("board_no") int board_no) throws Exception;
 
 	// 게시글 추가
 	public int insertBoard(Map<String, Object> board_map) throws Exception;

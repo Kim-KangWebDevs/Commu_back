@@ -32,7 +32,7 @@ public class ReplyService {
 	// 댓글 리스트 조회
 	public List<Map<String, Object>> findReplylist(int board_no, String reply_order, String reply_page) throws Exception {
 
-		Map<String, Object> reply_map = new HashMap<String, Object>();
+		Map<String, Object> reply_map = new HashMap<>();
 		reply_map.put("board_no", board_no);
 		reply_map.put("reply_order", reply_order);
 		// 이자리 페이징 추가(startRow, endRow)
