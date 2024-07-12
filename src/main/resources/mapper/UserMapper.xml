@@ -2,7 +2,9 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-  
+
+<!-- @Auther 김태우-->
+<!-- 2024.07.12 변경사항 UserVO -> com.Commu_back.vo.UserVO -->
 <mapper namespace="com.Commu_back.mapper.UserMapper">
 
 	<!-- 특정 사용자 조회 -->

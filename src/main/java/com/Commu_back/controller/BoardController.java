@@ -48,7 +48,7 @@ public class BoardController {
 			@RequestParam(value = "no", required = false) Integer board_no,
 			@RequestParam(value = "target", required = false) String target,
 			@RequestParam(value = "keyword", required = false) String keyword,
-			@RequestParam(value = "page", required = false) Integer page) throws Exception {
+			@RequestParam(value = "page", required = false) String page) throws Exception {
 
 		String board_name = boardservice.findBoardName(board_id);
 
@@ -145,7 +145,7 @@ public class BoardController {
 	// 게시글 삭제 
 	@GetMapping("/boardremove.do")
 	@ResponseBody
-	public ResponseEntity<Integer> boardRemove(@RequestParam("no") int board_no) throws Exception {
+	public ResponseEntity<Integer> boardRemove(@RequestParam("no") String board_no) throws Exception {
 		
 		String user_id = "user001"; 
 		//session.getUserId();

@@ -34,6 +34,7 @@ public class WebSecurityCongfig{
 		return http.build();
 	} 
 	
+	// static 추가
 	@Bean
 	public static PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();

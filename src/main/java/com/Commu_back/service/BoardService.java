@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.Commu_back.mapper.BoardMapper;
+import com.Commu_back.util.DataType;
 import com.Commu_back.vo.BoardVO;
 import com.Commu_back.vo.PagingVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class BoardService {
 
 	private BoardMapper boardmapper;
+	
+	private DataType datatype;
+	
 	ObjectMapper objectMapper = new ObjectMapper();
 	
 	@Autowired
@@ -52,11 +56,9 @@ public class BoardService {
 	public Map<String, Object> fineBoardList(String board_id, String target, String keyword, String page)
 			throws Exception {
 		
-		// 1. view에서 받아온 현재 페이지 값이 유효한지 검증 후 숫자형으로 변환  
-		int curPage = page != null && page != "" ? page.chars().allMatch(Character::isDigit) == true ? Integer.parseInt(page) : 1 : 1;
-		
-		// 2. 페이징을 위한 해당 검색의 게시글 총합 개수 조회 및 페이징VO 생성 
-		PagingVO pagingVO = new PagingVO(boardmapper.selectBoardCount(board_id, target, keyword), 20, curPage);
+		// 1. view에서 받아온 현재 페이지 값이 유효한지 검증 후 숫자형으로 변환 후
+		// 페이징을 위한 해당 검색의 게시글 총합 개수 조회 및 페이징VO 생성 
+		PagingVO pagingVO = new PagingVO(boardmapper.selectBoardCount(board_id, target, keyword), 20, datatype.isDigit(page));
 		
 		// 3. DB 검색 후 결과 조회    
 		Map<String, Object> board_map = new HashMap<String, Object>();
@@ -90,9 +92,9 @@ public class BoardService {
 		return boardmapper.insertBoard(board_map);
 	}
 
-	public int removeBoard(int board_no, String user_id) throws Exception {
+	public int removeBoard(String board_no, String user_id) throws Exception {
 
-		return boardmapper.deleteBoard(board_no, user_id);
+		return boardmapper.deleteBoard(datatype.isDigit(board_no), user_id);
 	}
 
 }
