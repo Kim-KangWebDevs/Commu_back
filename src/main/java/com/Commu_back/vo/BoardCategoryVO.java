@@ -1,15 +1,20 @@
 package com.Commu_back.vo;
 
-import org.springframework.stereotype.Component;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import lombok.Data;
-
-@Data
-@Component
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class BoardCategoryVO {
-	
-    private String board_id; 
-    private String board_name; 
-    private String board_category_regdate; 
-    
+
+	private int board_category_no;
+	private String board_category;
+	private String board_category_desc;
+	private String board_category_regdate;
+
 }

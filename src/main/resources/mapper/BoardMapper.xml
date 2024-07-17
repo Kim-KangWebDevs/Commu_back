@@ -9,13 +9,13 @@
 	<select id="selectCategoryCount" resultType="int">
 		<![CDATA[	
 			-- 페이징시 게시판 카테고리 총 개수 조회
-			select max(board_id) 
-			from board_category_tb 
+			SELECT MAX(board_category)
+			FROM board_category_tb
 		]]>
 			<choose>
-				<when test="board_id == null and !test.equals('') " />
+				<when test="board_category == null AND !test.equals('') " />
 				<otherwise>
-					where board_id like '%'||#{board_id}||'%' 
+					WHERE LOWER(board_category_desc) LIKE '%'||#{board_category_desc}||'%' 
 				</otherwise>
 			</choose>
 	</select>
@@ -24,50 +24,81 @@
 	<select id="selectCategoryList" resultType="hashmap">
 		<![CDATA[	
 			-- 게시판 카테고리 전체조회 및 검색기능 
-			select board_name 
-			from board_category_tb 
+			SELECT board_category_desc
+			FROM board_category_tb
 		]]>
 			<choose>
-				<when test="board_id == null and !test.equals('') " />
+				<when test="board_category == null AND !test.equals('') " />
 				<otherwise>
-					where board_id like '%'||#{board_id}||'%' 
+					WHERE LOWER(board_category_desc) LIKE '%'||#{board_category_desc}||'%' 
 				</otherwise>
 			</choose>
+		<![CDATA[	
+			WHERE rownum BETWEEN #{startRow} AND #{endRow} 
+		]]>
 	</select>
 	
 	<!-- 카테고리 추가 -->
 	<insert id="insertCategory">
 		<![CDATA[
-			insert 
-			into board_category_tb(board_id, board_name) 
-			values(#{board_id}, #{board_name}) 
+			INSERT ALL
+			INTO board_category_tb(board_category, board_category_desc) 
+				VALUES(#{board_category}, #{board_category_desc}) 
+			INTO board_role_tb(board_category_no, board_role_no) 
+				VALUES(
+					(
+						SELECT count(*) + 1 
+						FROM board_role_tb
+					), 
+					#{board_role_no} 
+				)
+			SELECT * FROM dual 
 		]]>
 	</insert>
 	
 	<!-- 카테고리 삭제 -->
 	<delete id="deleteCategory">
 		<![CDATA[
-			delete 
-			from board_category_tb 
-			where board_id = #{board_id}  
+			DELETE 
+			FROM board_category_tb 
+			WHERE board_category = #{board_category}; 
+			
+			DELETE 
+			FROM board_role_tb 
+			WHERE board_category_no = (
+				select board_category_no
+				from board_category_tb  
+				where board_category = #{board_category}
+			); 
 		]]>
 	</delete>
+	
+	<update id="updateCategoryAuth">
+		<![CDATA[
+			UPDATE board_role_tb SET board_role_no = #{board_role_no} 
+			WHERE board_category_no = (
+				SELECT board_category_no 
+				FROM board_category_tb 
+				WHERE board_category = #{board_category} 
+			) 
+		]]>
+	</update>
 	
 	<!-- 카테고리 이름 조회 -->
 	<select id="selectCategoryName" resultType="String">
 		<![CDATA[
-			select board_name 
-			from board_category 
-			where board_id = #{board_id} 
+			SELECT board_category_desc 
+			FROM board_category_tb 
+			WHERE LOWER(board_category) = #{board_category} 
 		]]>
 	</select>
 	
 	<!-- 조회수 증가 -->
 	<insert id="updateBoardView">
 		<![CDATA[
-			update board_tb 
-			set board_views = board_views + 1 
-			where board_no = #{board_no} 
+			UPDATE board_tb 
+			SET board_views = board_views + 1 
+			WHERE board_no = #{board_no} 
 		]]>
 	</insert>
 	
@@ -75,30 +106,42 @@
 	<select id="selectBoardCount" resultType="int">
 		<![CDATA[
 			-- 
-			select board_id, board_no, board_title, user_no, board_views, board_good, board_regdate
-			from board_tb 
+			SELECT board_category, board_no, board_title, user_no, board_views, board_good, board_regdate
+			FROM board_tb 
 			]]>
 				<choose>
-					<when test="board_id != 'all'">
-						where board_id = #{board_id} 
+					<when test="board_category != 'all' AND board_category != null">
+						WHERE LOWER(board_category) = #{board_category} 
 					</when>
 					<otherwise>
-						where 1 = 1 
+						WHERE 1 = 1 
 					</otherwise>
 				</choose>
 				<choose>
-					<when test="target == 'all' " />
+					<when test="target == 'all' OR target == null">
+						AND 
+						(
+							LOWER(board_title) LIKE '%'||#{keyword}||'%' 
+							OR LOWER(board_content) LIKE '%'||#{keyword}||'%'
+							OR user_no LIKE 
+							(
+								SELECT user_no 
+								FROM user_tb 
+								WHERE LOWER(user_chr) = '%'||#{keyword}||'%'
+							) 
+						)
+					</when>
 					<when test="target == 'title' ">
-						and board_title like '%'||#{keyword}||'%'
+						AND LOWER(board_title) LIKE '%'||#{keyword}||'%'
 					</when>
 					<when test="target == 'content' ">
-						and board_content like '%'||#{keyword}||'%'
+						AND LOWER(board_content) LIKE '%'||#{keyword}||'%'
 					</when>
 					<when test="target == 'writer' ">
-						and '%'||#{keyword}||'%' like (
-							select user_chr 
-							from user_tb 
-							where user_no = '%'||#{keyword}||'%' 
+						AND user_no LIKE (
+							SELECT user_no 
+							FROM user_tb 
+							WHERE LOWER(user_chr) = '%'||#{keyword}||'%' 
 						)
 					</when>
 					<otherwise />
@@ -110,42 +153,54 @@
 		<![CDATA[
 			
 			-- 3차, 순번으로 정렬된 검색결과를 parameter 값에 따라 조회 
-			-- 작성자의 별명을 뷰에 추가하기 위해 유저 테이블과 innerjoin 
+			-- 작성자의 별명을 뷰에 추가하기 위해 유저 테이블과 INNERJOIN 
 			-- 이후 페이징을 위해 설정된 row 개수만큼 column을 반환   
-			select board_id, board_no, board_title, user_chr, board_views, board_good, board_regdate, 
-			(select count(*) from reply_tb where board_no = t.board_no)reply_count 
-			from (
+			SELECT board_category, board_no, board_title, user_chr, board_views, board_good, board_regdate, 
+			(SELECT count(*) FROM reply_tb WHERE board_no = t.board_no)reply_count 
+			FROM (
 				
 				-- 2차, 페이징을 위한 순번 부여 
-				select rownum rnum, board_id, board_no, board_title, user_no, board_views, board_good, board_regdate, 
-				from (
+				SELECT rownum rnum, board_category, board_no, board_title, user_no, board_views, board_good, board_regdate, 
+				FROM (
 					
 					-- 1차, 타입별 키워드검색 후 글번호의 역순으로 정렬되지 않은 결과를 재정렬  
 					-- 통합검색 및 카테고리별 검색 지원 
-					select board_id, board_no, board_title, user_no, board_views, board_good, board_regdate
-					from board_tb 
+					SELECT board_category, board_no, board_title, user_no, board_views, board_good, board_regdate
+					FROM board_tb 
 					]]>
 						<choose>
-							<when test="board_id != 'all'">
-								where board_id = #{board_id} 
+							<when test="board_category != 'all' AND board_category != null">
+								WHERE LOWER(board_category) = #{board_category} 
 							</when>
 							<otherwise>
-								where 1 = 1 
+								WHERE 1 = 1 
 							</otherwise>
 						</choose>
 						<choose>
-							<when test="target == 'all' " />
+							<when test="target == 'all' OR target == null">
+								AND 
+								(
+									LOWER(board_title) LIKE '%'||#{keyword}||'%' 
+									OR LOWER(board_content) LIKE '%'||#{keyword}||'%'
+									OR user_no LIKE 
+									(
+										SELECT user_no 
+										FROM user_tb 
+										WHERE LOWER(user_chr) = '%'||#{keyword}||'%'
+									) 
+								)
+							</when>
 							<when test="target == 'title' ">
-								and board_title like '%'||#{keyword}||'%'
+								AND LOWER(board_title) LIKE '%'||#{keyword}||'%'
 							</when>
 							<when test="target == 'content' ">
-								and board_content like '%'||#{keyword}||'%'
+								AND LOWER(board_content) LIKE '%'||#{keyword}||'%'
 							</when>
 							<when test="target == 'writer' ">
-								and '%'||#{keyword}||'%' like (
-									select user_chr 
-									from user_tb 
-									where user_no = '%'||#{keyword}||'%' 
+								AND user_no LIKE (
+									SELECT user_no 
+									FROM user_tb 
+									WHERE LOWER(user_chr) = '%'||#{keyword}||'%' 
 								)
 							</when>
 							<otherwise />
@@ -154,20 +209,20 @@
 						order by board_no desc
 				)t 
 				
-			) inner join user_tb  
+			) INNER JOIN user_tb  
 			
-			on board_tb.user_no = user_tb.user_no 
-			where rnum between #{startRow} and #{endRow} 
+			ON board_tb.user_no = user_tb.user_no 
+			WHERE rnum BETWEEN #{startRow} AND #{endRow} 
 		]]>
 	</select>
 	
 	<!-- 게시글 조회 -->
 	<select id="selectBoard" resultType="hashmap">
 		<![CDATA[
-			select board_title, user_chr, board_content, board_regdate, board_good, board_bad
-			from board_tb inner join user_tb 
-			on board_tb.user_no = user_tb.user_no 
-			where board_no = #{board_no} 
+			SELECT board_title, user_chr, board_content, board_regdate, board_good, board_bad
+			FROM board_tb INNER JOIN user_tb 
+			ON board_tb.user_no = user_tb.user_no 
+			WHERE board_no = #{board_no} 
 		]]>
 	</select>
 	
@@ -175,36 +230,36 @@
 	<insert id="insertBoard"
 		parameterType="hashmap">
 		<![CDATA[
-			merge into board_tb 
+			merge INTO board_tb 
 			using dual 
-			on (#{board_no} > 0) 
+			ON (#{board_no} > 0) 
 			
 			-- 기존 게시글이 있을 때 글 갱신 
 			-- 인증값으로 받아온 유저 아이디를 유저 테이블에서 유저 번호로 조회 후
 			-- 해당 게시글의 작성자와 같은지 매칭  
-			when matched then 
-			update set board_title = #{board_title}, 
+			WHEN matched then 
+			UPDATE SET board_title = #{board_title}, 
 						board_content = #{board_content}, 
-						board_updatedate = sysdate 
-			where board_no = #{board_no} 
-			and user_no = (
-				select user_no  
-				from user_tb 
-				where user_id = #{user_id}
+						board_UPDATEdate = sysdate 
+			WHERE board_no = #{board_no} 
+			AND user_no = (
+				SELECT user_no  
+				FROM user_tb 
+				WHERE user_id = #{user_id}
 			}
 			
 			-- 기존 게시글이 없을 때 글 추가 
-			when not matched then 
-			insert (board_title, board_content, board_id, user_no) 
-			values (#{board_title}, #{board_content}, #{board_id}, #{user_no}) 
+			WHEN not matched then 
+			INSERT (board_title, board_content, board_category, user_no) 
+			VALUES (#{board_title}, #{board_content}, #{board_category}, #{user_no}) 
 		]]>
 		<selectKey resultType="int" keyProperty="board_no"
 			order="AFTER">
 			<![CDATA[	
 				-- 기존 글이 존재하지 않는 경우 이미지 업로드시 필요한 글 번호를 반환 
-				select max(board_no) 
-				from board_tb 
-				where board_id = #{board_id} 
+				SELECT MAX(board_no) 
+				FROM board_tb 
+				WHERE board_category = #{board_category} 
 			]]>
 		</selectKey>
 	</insert>
@@ -214,12 +269,12 @@
 		<![CDATA[
 			-- 1. 인증값으로 받아온 회원 아이디를 유저 테이블과 매칭해 유저 번호를 불러옴
 			-- 2. 게시글 테이블의 유저 번호와 조회된 번호가 같지 않으면 0을 반환 (성공시 1을 반환)
-			delete from board_tb 
-			where board_no = #{board_no} 
-				and user_no = ( 
-					select user_no 
-					from user_tb 
-					where user_id = #{user_id} 
+			DELETE FROM board_tb 
+			WHERE board_no = #{board_no} 
+				AND user_no = ( 
+					SELECT user_no 
+					FROM user_tb 
+					WHERE user_id = #{user_id} 
 				)
 		]]>
 	</delete>

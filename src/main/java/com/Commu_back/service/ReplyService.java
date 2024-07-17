@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.Commu_back.mapper.ReplyMapper;
 import com.Commu_back.vo.ReplyVO;
@@ -23,14 +24,14 @@ public class ReplyService {
 	}
 
 	// 댓글 개수 조회
-	public int findReplyCount(int board_no) throws Exception {
+	public int findReplyCount(int board_no) {
 
 		return replymapper.selectReplyCount(board_no);
 
 	}
 
 	// 댓글 리스트 조회
-	public List<Map<String, Object>> findReplylist(int board_no, String reply_order, String reply_page) throws Exception {
+	public List<Map<String, Object>> findReplylist(int board_no, String reply_order, String reply_page) {
 
 		Map<String, Object> reply_map = new HashMap<>();
 		reply_map.put("board_no", board_no);
@@ -42,7 +43,8 @@ public class ReplyService {
 	}
 
 	// 댓글 추가
-	public int addReply(ReplyVO replyVO, String user_id) throws Exception {
+	@Transactional(rollbackFor = Exception.class)
+	public int addReply(ReplyVO replyVO, String user_id) {
 
 		Map<String, Object> reply_map = objectMapper.convertValue(replyVO, HashMap.class);
 		reply_map.put("user_id", user_id);
@@ -52,7 +54,8 @@ public class ReplyService {
 	}
 
 	// 댓글 삭제
-	public int removeReply(String user_id, Integer reply_no) throws Exception {
+	@Transactional(rollbackFor = Exception.class)
+	public int removeReply(String user_id, Integer reply_no) {
 
 		return replymapper.deleteReply(user_id, reply_no);
 

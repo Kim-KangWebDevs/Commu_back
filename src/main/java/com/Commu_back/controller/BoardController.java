@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.Commu_back.service.BoardService;
 import com.Commu_back.vo.BoardVO;
 
-/*  
- * @Author kimtaeu 
-*/
 @Controller
 @RequestMapping("/board/*")
 public class BoardController {
@@ -28,7 +25,7 @@ public class BoardController {
 	private BoardService boardservice;
 	private static Logger log = LoggerFactory.getLogger(BoardController.class);
 
-	// singleton for dependency injection into a BoardService class
+	// BoardService 싱글톤 생성 
 	@Autowired
 	public BoardController(BoardService boardservice) {
 		this.boardservice = boardservice;
@@ -37,28 +34,28 @@ public class BoardController {
 	// 페이지 연결 메소드
 	// 게시판 카테고리 페이지
 	@GetMapping("/category")
-	public String boardCategory(@RequestParam("id") String board_id) throws Exception {
+	public String boardCategory(@RequestParam("id") String board_category) {
 
 		return "/Board/CategoryPage";
 	}
 
 	// 검색 페이지(게시글, 게시글 목록 포함)
 	@GetMapping("/search")
-	public String boardSearch(@RequestParam("id") String board_id,
+	public String boardSearch(@RequestParam("id") String board_category,
 			@RequestParam(value = "no", required = false) Integer board_no,
 			@RequestParam(value = "target", required = false) String target,
 			@RequestParam(value = "keyword", required = false) String keyword,
-			@RequestParam(value = "page", required = false) String page) throws Exception {
+			@RequestParam(value = "page", required = false) String page) {
 
-		String board_name = boardservice.findBoardName(board_id);
+		String board_category_desc = boardservice.findBoardDesc(board_category);
 
-		if (board_name == "null") {
+		if (board_category_desc == "null") {
 
 			log.info("Linked to MainPage");
 			return "redirect:/";
 
 		}
-
+		
 		if (board_no != null) {
 
 			boardservice.addBoardViews(board_no);
@@ -73,72 +70,78 @@ public class BoardController {
 
 	// 게시글 작성 및 수정 페이지
 	@GetMapping("/write")
-	public String boardWrite(@RequestParam("id") String board_id) throws Exception {
+	public String boardWrite(@RequestParam("id") String board_category) {
 
 		return "/Board/WritePage";
 	}
 
 	// 데이터 응답 페이지
 	// 게시판 카테고리 리스트 조회
-//	@GetMapping("/listcategory.do")
-//	@ResponseBody
-//	public ResponseEntity<Map<String, Object>> listCategory(@RequestParam("id") String board_id) throws Exception {
-//
-//		Map<String, Object> categoryMap = new HashMap<String, Object>();
-//		categoryMap.put("list", boardservice.findBoardCategory(board_id));
-//		categoryMap.put
-//		return new ResponseEntity<>(categoryMap, HttpStatus.OK);
-//	}
+	@GetMapping("/listcategory.do")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> listCategory(@RequestParam("id") String board_category,
+			@RequestParam("target") String board_category_desc, @RequestParam("page") String page) {
+
+		return new ResponseEntity<>(boardservice.findCategoryList(board_category, board_category_desc, page),
+				HttpStatus.OK);
+	}
 
 	// 게시판 카테고리 추가
-//	@GetMapping("/addcategory.do")
-//	@ResponseBody
-//	public ResponseEntity<Integer> addCategory(@RequestParam("id") String board_id,
-//			@RequestParam("name") String board_name) throws Exception {
-//
-//		return new ResponseEntity<>(1, HttpStatus.OK);
-//	}
+	@GetMapping("/addcategory.do")
+	@ResponseBody
+	public ResponseEntity<Integer> addCategory(@RequestParam("id") String board_category,
+			@RequestParam("name") String board_category_desc, @RequestParam("auth") String board_role_no) {
+
+		return new ResponseEntity<>(boardservice.addCategory(board_category, board_category_desc, board_role_no), HttpStatus.OK);
+	}
 
 	// 게시판 카테고리 삭제
-//	@GetMapping("/removecategory.do")
-//	@ResponseBody
-//	public ResponseEntity<Integer> removeCategory(@RequestParam("id") String board_id) throws Exception {
-//
-//		return new ResponseEntity<>(1, HttpStatus.OK);
-//	}
+	@GetMapping("/removecategory.do")
+	@ResponseBody
+	public ResponseEntity<Integer> removeCategory(@RequestParam("id") String board_category) {
 
+		return new ResponseEntity<>(boardservice.removeCategory(board_category), HttpStatus.OK);
+	}
+
+	// 게시판 카테고리 접근 권한 변경
+	@GetMapping("/modifycategoryauth.do")
+	@ResponseBody
+	public ResponseEntity<Integer> modifyCategoryAuth(@RequestParam("id") String board_category, @RequestParam("auth") String board_role_no) {
+
+		return new ResponseEntity<>(boardservice.modifyCategoryAuth(board_category, board_role_no), HttpStatus.OK);
+	}
+	
 	// 게시판 카테고리 이름 조회
-//	@GetMapping("/namecategory.do")
-//	@ResponseBody
-//	public ResponseEntity<String> nameCategory(@RequestParam("id") String board_id) throws Exception {
-//
-//		return new ResponseEntity<>("1", HttpStatus.OK);
-//	}
+	@GetMapping("/desccategory.do")
+	@ResponseBody
+	public ResponseEntity<String> descCategory(@RequestParam("id") String board_category) {
+
+		return new ResponseEntity<>(boardservice.findBoardDesc(board_category), HttpStatus.OK);
+	}
 
 	// 게시글 리스트 조회
 	@GetMapping("/boardlist.do")
 	@ResponseBody
-	public ResponseEntity<Map<String, Object>> boardList(@RequestParam("id") String board_id,
+	public ResponseEntity<Map<String, Object>> boardList(@RequestParam("id") String board_category,
 			@RequestParam("target") String target, @RequestParam("keyword") String keyword,
-			@RequestParam("page") String page) throws Exception {
+			@RequestParam("page") String page) {
 
-		return new ResponseEntity<>(boardservice.fineBoardList(board_id, target, keyword, page), HttpStatus.OK);
-		
+		return new ResponseEntity<>(boardservice.fineBoardList(board_category, target, keyword, page), HttpStatus.OK);
+
 	}
 
 	// 게시글 조회
 	@PostMapping("/boarddetail.do")
 	@ResponseBody
-	public ResponseEntity<Map<String, Object>> boardDetail(@RequestParam("no") String board_no) throws Exception {
+	public ResponseEntity<Map<String, Object>> boardDetail(@RequestParam("no") String board_no) {
 
-		BoardVO boardVO = new BoardVO();
 		return new ResponseEntity<>(boardservice.fineBoard(board_no), HttpStatus.OK);
-		
+
 	}
 
 	// 게시글 추가 및 수정
 	@PostMapping("/boardwrite.do")
-	public ResponseEntity<Integer> boardWrite(@RequestBody BoardVO boardVO) throws Exception {
+	public ResponseEntity<Integer> boardWrite(@RequestBody BoardVO boardVO) {
 
 		// session.getUserId();
 		String user_id = "user001";
@@ -150,7 +153,7 @@ public class BoardController {
 	// 게시글 삭제
 	@GetMapping("/boardremove.do")
 	@ResponseBody
-	public ResponseEntity<Integer> boardRemove(@RequestParam("no") String board_no) throws Exception {
+	public ResponseEntity<Integer> boardRemove(@RequestParam("no") String board_no) {
 
 		// session.getUserId();
 		String user_id = "user001";
