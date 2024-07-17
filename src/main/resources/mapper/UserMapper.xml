@@ -61,15 +61,15 @@
 	</select>
 		
 	<!-- 사용자 추가 -->
-	<insert id="insertUser">
+	<insert id="insertUser" parameterType="com.Commu_back.vo.UserVO">
 		INSERT ALL
 		INTO user_tb
 			(
-			user_id, user_pw, user_chr, user_email, file_name 
+			user_id, user_pw, user_chr, user_email  
 			)
 		VALUES
 			(
-			#{userId}, #{userPw}, #{userChr}, #{userEmail}, #{fileName}
+			#{userId}, #{userPw}, #{userChr}, #{userEmail}
 			)
 		INTO user_role_tb
 			(
