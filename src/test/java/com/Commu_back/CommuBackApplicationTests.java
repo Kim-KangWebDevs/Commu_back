@@ -110,7 +110,7 @@ class CommuBackApplicationTests {
 			requestBody = objectMapper.writeValueAsString(userlist.get(i));	
 			
 			// 3-2 계정 추가 
-			mvc.perform(MockMvcRequestBuilders.get("/user/set")
+			mvc.perform(MockMvcRequestBuilders.post("/user/set")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(requestBody))
 				.andExpect(MockMvcResultMatchers.status().isOk());
