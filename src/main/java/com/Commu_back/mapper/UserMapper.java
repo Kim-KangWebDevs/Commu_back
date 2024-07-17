@@ -24,14 +24,14 @@ public interface UserMapper {
 	//4.특정 사용자 권환 조회
 	public List<AuthVO> selectUserAuth(@Param("userId") String userId);
 	
-	//5.사용자 권환 추가
-	public int insertAuth(@Param("userNo")int userNo,@Param("roleNo")int roleNo);
+	//5.사용자 권환 변경
+	public int updateAuth(UserVO userVO);
 	
 	//6.사용자 추가
 	public int insertUser(UserVO userVo);
 	
 	//7.사용자 수정
-	public int updateUser(@RequestBody UserVO userVO);
+	public int updateUser(UserVO userVO);
 	
 	//8.사용자 제거
 	public int deleteUser(@Param("userNo")int userNo);

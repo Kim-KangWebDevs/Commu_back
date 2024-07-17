@@ -1,16 +1,18 @@
 package com.Commu_back.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.Commu_back.mapper.UserMapper;
 import com.Commu_back.vo.AuthVO;
 import com.Commu_back.vo.UserVO;
 import com.github.pagehelper.PageHelper;
-
 
 @Service
 public class UserService {
@@ -31,8 +33,11 @@ public class UserService {
 	}
 	
 	//3.특정유저조회
-	public UserVO getSelectUserInfo(String userId) {
-		return userMapper.selectUserInfo(userId);
+	public Map<String, Object> getSelectUserInfo(String userId) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("user",userMapper.selectUserInfo(userId));
+		map.put("userAuth", userMapper.selectUserAuth(userId));
+		return map;
 	}
 	
 	//4.특정 권환 조회
@@ -40,12 +45,16 @@ public class UserService {
 		return userMapper.selectUserAuth(userId);
 	}
 	
-	//5.사용자 권환 추가
-	public int getInsertAuth(int userNo, int roleNo) {
-		return userMapper.insertAuth(userNo, roleNo);
-	} 
+	//5. 특정 권환 변경
+	@Transactional(rollbackFor = Exception.class)
+	public int getupdateAuth(UserVO userVO, int userNo) {
+		userVO.setUserNo(userNo);
+		int row = userMapper.updateAuth(userVO);
+		return row;
+	}
 	
 	//6.유저 추가
+	@Transactional(rollbackFor = Exception.class)
 	public int setUser(UserVO userVo) {
 		String pw = userVo.getUserPw();
 		pw = passwordEncoder.encode(pw);
@@ -54,14 +63,18 @@ public class UserService {
 	}
 		
 	//7.유저수정
-	public int getUpdateUser(UserVO userVO) {
+	@Transactional(rollbackFor = Exception.class)
+	public int getUpdateUser(UserVO userVO, int userNo) {
+		userVO.setUserNo(userNo);
 		String pw = userVO.getUserPw();
 		pw = passwordEncoder.encode(pw);
 		userVO.setUserPw(pw);
-		return userMapper.updateUser(userVO);
+		int row = userMapper.updateUser(userVO);
+		return row;
 	}
 	
 	//8.유저삭제
+	@Transactional(rollbackFor = Exception.class)
 	public int getDeleteUser(int userNo) {
 		return userMapper.deleteUser(userNo);
 		

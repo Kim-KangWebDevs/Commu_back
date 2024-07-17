@@ -62,38 +62,39 @@
 		
 	<!-- 사용자 추가 -->
 	<insert id="insertUser">
-		INSERT INTO user_tb
-		(
-		user_id,
-		user_password,
-		user_chr,
-		user_email,
-		file_name
-		)
-	VALUES
-		(
-		#{userId},
-		#{userPw},
-		#{userChr},
-		#{userEmail},
-		#{fileName}
-		)
-	</insert>
-	
-	<!-- 사용자 권환 추가 -->
-	<insert id="insertAuth">
-		INSERT INTO user_role_tb
-		(
-			user_no,
-			role_no
-		)
+		INSERT ALL
+		INTO user_tb
+			(
+			user_id, user_pw, user_chr, user_email, file_name 
+			)
 		VALUES
-		(
-			#{userNo},
-			#{roleNo}
-		)
+			(
+			#{userId}, #{userPw}, #{userChr}, #{userEmail}, #{fileName}
+			)
+		INTO user_role_tb
+			(
+			user_no
+			)
+		VALUES
+			(
+			(SELECT COUNT(*)+1 FROM USER_TB)
+			)
+		SELECT * FROM DUAL
 	</insert>
 	
+	<!-- 권환 변경 -->	
+	<update id="updateAuth">
+		UPDATE
+			user_role_tb
+		SET
+			role_no = #{roleNo}
+			<if test="role != null">
+				,role_no = #{roleNo}
+			</if>
+		WHERE
+			user_no = #{userNo}
+	</update>
+		
 	<!-- 사용자 수정 -->
 	<update id="updateUser">
 		UPDATE
@@ -163,5 +164,7 @@
 		WHERE 
 			u.user_id LIKE '%'||#{search}||'%' or u.user_chr LIKE '%'||#{search}||'%'
 	</select>
+	
+	
 	
 </mapper>
