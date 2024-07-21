@@ -8,76 +8,77 @@
 	<!-- 댓글 총 개수 조회 -->
 	<select id="selectReplyCount">
 		<![CDATA[
-			select count(*) 
-			from reply_tb 
-			where board_no = #{board_no} 
+			SELECT count(*)
+			FROM reply_tb
+			WHERE board_no = #{board_no}
 		]]>
 	</select>
 	
 	<!-- 댓글 리스트 조회 -->
-	<select id="selectReplyList" resultType="hashmap">
+	<select id="selectReplyList" parameterType="hashmap" resultType="hashmap">
 		<![CDATA[
 			-- 3차검색, 페이징 처리 
-			select reply_no, user_chr, reply_group, reply_dept, 
-			        reply_writer, reply_content, reply_regdate, reply_good
-			from(
+			SELECT reply_no, r.user_no, u.user_chr, reply_content, reply_group, reply_dept, reply_regdate 
+			FROM(
 			
 				-- 2차검색, 정렬된 값에 순번을 재부여 
-			    select rownum rnum, reply_no, user_chr, reply_group, reply_dept, 
-			            reply_writer, reply_content, reply_regdate, reply_good
-			    from(
+			    SELECT rownum rnum, reply_no, user_no, reply_content, reply_group, reply_dept, reply_regdate 
+			    FROM(
 			    
 			    	-- 1차검색, 검색 후 순차 혹은 역순으로 정렬 
-			        select reply_no, user_chr, reply_group, reply_dept, 
-			        		reply_writer, reply_content, reply_regdate, reply_good
+			        SELECT reply_no, user_no, reply_content, reply_group, reply_dept, reply_regdate 
 			        from reply_tb 
-					inner join user_tb  
-					on reply_tb.user_no = user_tb.user_no 
-					where board_no = #{board_no} 
+			        WHERE board_no = #{board_no} 
 			        ]]>
 		<choose>
 	        <when test="reply_order == 'asc' ">
-	       		 	order by reply_group asc, reply_no asc
+	       		 	ORDER BY reply_group asc, reply_no asc
 				) 
 	        </when>
 	        <when test="reply_order == 'desc' ">
-	        		order by reply_group desc, reply_no desc
+	        		ORDER BY reply_group desc, reply_no desc
 				) 
-				order by rownum desc 
+				ORDER BY rownum desc 
 	        </when>
 	        <otherwise>
-					order by reply_group asc, reply_no asc
+					ORDER BY reply_group asc, reply_no asc
 				)
 	        </otherwise>
         </choose>
 	    <![CDATA[
-			)
-			where rnum between #{startRow} and #{endRow} 
+			)r INNER JOIN user_tb u 
+			ON r.user_no = u.user_no 
+			WHERE rnum between #{startRow} and #{endRow} 
 		]]> 
 	</select>
 	
-	<!-- 댓글 추가 -->
-	<insert id="insertReply">
+	<!-- 댓글 추가 및 수정 -->
+	<insert id="insertReply" parameterType="hashmap">
 		<![CDATA[
-			merge into reply_tb 
-			using dual 
+			MERGE INTO reply_tb 
+			USING DUAL 
 			on (#{reply_no} > 0)
 			 
 			-- 기존 댓글이 있을 때 댓글 갱신
-			update set reply_content = #{reply_content}, 
+			UPDATE SET reply_content = #{reply_content}, 
 						reply_updatedate = sysdate 
-			where reply_no = #{reply_no} 
+			WHERE reply_no = #{reply_no} 
+			AND user_no = (
+					SELECT user_no 
+					FROM user_tb 
+					WHERE user_id = #{user_id} 
+				) 
 			
 			-- 기존 댓글 없을 때 댓글 추가 
-			insert into reply_tb( 
+			INSERT INTO reply_tb( 
 				board_no, reply_group, reply_dept, reply_content, user_no 
 			) 
-			values ( 
+			VALUES ( 
 				#{board_no}, #{reply_group}, #{reply_dept}, #{reply_content}, 
 				(
-					select user_no 
-					from user_tb 
-					where user_id = #{user_id} 
+					SELECT user_no 
+					FROM user_tb 
+					WHERE user_id = #{user_id} 
 				) 
 	        )
 		]]>
@@ -88,12 +89,13 @@
 		<![CDATA[	
 			delete from reply_tb 
 			where reply_no = #{reply_no} 
-			and user_no = 
+			AND user_no = 
 				(
-					select user_no 
-					from user_tb 
-					where user_id = #{user_id} 
+					SELECT user_no 
+					FROM user_tb 
+					WHERE user_id = #{user_id} 
 				) 
 		]]>
 	</delete>
+	
 </mapper>

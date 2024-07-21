@@ -1,6 +1,6 @@
 package com.Commu_back.service;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.Commu_back.mapper.ReplyMapper;
-import com.Commu_back.vo.ReplyVO;
+import com.Commu_back.vo.PagingVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -31,22 +31,32 @@ public class ReplyService {
 	}
 
 	// 댓글 리스트 조회
-	public List<Map<String, Object>> findReplylist(int board_no, String reply_order, String reply_page) {
+	public Map<String, Object> findReplylist(Map<String, Object> reply_map) {
 
-		Map<String, Object> reply_map = new HashMap<>();
-		reply_map.put("board_no", board_no);
-		reply_map.put("reply_order", reply_order);
-		// 이자리 페이징 추가(startRow, endRow)
+		List<Map<String, Object>> reply_list = new ArrayList<>();
+		int reply_total = replymapper.selectReplyCount((int) reply_map.get("board_no"));
 
-		return replymapper.selectReplyList(reply_map);
+		PagingVO pagingVO = new PagingVO(reply_total, 20, (int) reply_map.get("page"));
+		reply_map.remove("page");
+		reply_map.put("startRow", pagingVO.getStartRow());
+		reply_map.put("endRow", pagingVO.getEndRow());
+		reply_list = replymapper.selectReplyList(reply_map);
+
+		reply_map.clear();
+		reply_map.put("page", pagingVO);
+		reply_map.put("list", reply_list);
+
+		return reply_map;
 
 	}
 
-	// 댓글 추가
+	// 댓글 추가 및 수정
 	@Transactional(rollbackFor = Exception.class)
-	public int addReply(ReplyVO replyVO, String user_id) {
+	public int addReply(Map<String, Object> reply_map, String user_id) {
 
-		Map<String, Object> reply_map = objectMapper.convertValue(replyVO, HashMap.class);
+		if (((String) reply_map.get("reply_no")).chars().allMatch(Character::isDigit) == false)
+			reply_map.put("reply_no", 0);
+
 		reply_map.put("user_id", user_id);
 
 		return replymapper.insertReply(reply_map);
@@ -55,7 +65,7 @@ public class ReplyService {
 
 	// 댓글 삭제
 	@Transactional(rollbackFor = Exception.class)
-	public int removeReply(String user_id, Integer reply_no) {
+	public int removeReply(String user_id, int reply_no) {
 
 		return replymapper.deleteReply(user_id, reply_no);
 

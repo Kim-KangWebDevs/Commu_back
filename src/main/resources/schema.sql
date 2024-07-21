@@ -20,12 +20,6 @@ CREATE TABLE board_category_tb(
     board_category_regdate DATE DEFAULT sysdate
 );
 
--- 게시판 권한
-CREATE TABLE board_role_tb(
-	board_category_no NUMBER(16) NOT NULL,
-    board_role_no NUMBER(16) DEFAULT 3 NOT NULL  
-);
-
 -- 유저
 CREATE TABLE user_tb(
     user_no NUMBER(16) GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

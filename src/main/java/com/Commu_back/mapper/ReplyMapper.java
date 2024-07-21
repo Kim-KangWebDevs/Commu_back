@@ -15,7 +15,7 @@ public interface ReplyMapper {
 	// 댓글 리스트 조회
 	public List<Map<String, Object>> selectReplyList(Map<String, Object> reply_map);
 
-	// 댓글 추가
+	// 댓글 추가 및 수정
 	public int insertReply(Map<String, Object> reply_map);
 
 	// 댓글 삭제
