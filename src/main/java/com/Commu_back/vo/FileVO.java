@@ -10,8 +10,9 @@ public class FileVO {
 
 	private int file_no;
 	private int board_no;
-	private String board_id;
-	private String file_name;
+	private String board_category;
+	private String file_src;
+	private String file_desc;
 	private String file_regdate;
 	
 }

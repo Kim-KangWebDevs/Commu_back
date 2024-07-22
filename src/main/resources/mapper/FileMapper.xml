@@ -2,6 +2,24 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-  
+
 <mapper namespace="com.Commu_back.mapper.FileMapper">
+
+	<insert id="insertImage"
+		parameterType="com.Commu_back.vo.FileVO">
+		INSERT INTO file_tb (board_no, file_src, file_desc)
+		<foreach collection="imagelist" item="item"
+			separator="UNION ALL">
+			SELECT #{board_no}, #{file_src}, #{file_desc},
+			FROM DUAL
+		</foreach>
+	</insert>
+
+	<select id="selectImageList"
+		resultType="com.Commu_back.vo.FileVO">
+		SELECT file_src, file_desc
+		FROM file_tb
+		WHERE board_no = #{board_no}
+	</select>
+
 </mapper>
