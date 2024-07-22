@@ -23,10 +23,10 @@ CREATE TABLE board_category_tb(
 -- 유저
 CREATE TABLE user_tb(
     user_no NUMBER(16) GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    user_id varchar(32) NOT NULL, 
+    user_id varchar(32) NOT NULL CONSTRAINT user_id_uq UNIQUE, 
     user_pw varchar(128) NOT NULL, 
-    user_chr varchar(32) NOT NULL, 
-    user_email varchar(64) NOT NULL, 
+    user_chr varchar(32) NOT NULL CONSTRAINT user_chr_uq UNIQUE, 
+    user_email varchar(64) NOT NULL CONSTRAINT user_email_uq UNIQUE, 
     user_regdate DATE DEFAULT sysdate,
     file_name varchar(256) DEFAULT NULL 
 );
