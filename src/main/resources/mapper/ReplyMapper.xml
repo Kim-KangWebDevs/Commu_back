@@ -7,95 +7,91 @@
 
 	<!-- 댓글 총 개수 조회 -->
 	<select id="selectReplyCount">
-		<![CDATA[
-			SELECT count(*)
-			FROM reply_tb
-			WHERE board_no = #{board_no}
-		]]>
+		SELECT count(*)
+		FROM reply_tb
+		WHERE board_no = #{board_no}
 	</select>
 	
 	<!-- 댓글 리스트 조회 -->
-	<select id="selectReplyList" parameterType="hashmap" resultType="hashmap">
-		<![CDATA[
-			-- 3차검색, 페이징 처리 
-			SELECT reply_no, r.user_no, u.user_chr, reply_content, reply_group, reply_dept, reply_regdate 
-			FROM(
+	<select id="selectReplyList" parameterType="hashmap"
+	resultType="hashmap">
+	-- 3차검색, 페이징 처리
+	SELECT reply_no, r.user_no, u.user_chr, reply_content, reply_group,
+	reply_dept, reply_regdate
+	FROM(
+
+		-- 2차검색, 정렬된 값에 순번을 재부여
+		SELECT rownum rnum, reply_no, user_no, reply_content, reply_group,
+		reply_dept, reply_regdate
+		FROM(
+
+			-- 1차검색, 검색 후 순차 혹은 역순으로 정렬
+			SELECT reply_no, user_no, reply_content, reply_group, reply_dept,
+			reply_regdate
+			from reply_tb
+			WHERE board_no = #{board_no}
 			
-				-- 2차검색, 정렬된 값에 순번을 재부여 
-			    SELECT rownum rnum, reply_no, user_no, reply_content, reply_group, reply_dept, reply_regdate 
-			    FROM(
-			    
-			    	-- 1차검색, 검색 후 순차 혹은 역순으로 정렬 
-			        SELECT reply_no, user_no, reply_content, reply_group, reply_dept, reply_regdate 
-			        from reply_tb 
-			        WHERE board_no = #{board_no} 
-			        ]]>
-		<choose>
-	        <when test="reply_order == 'asc' ">
-	       		 	ORDER BY reply_group asc, reply_no asc
-				) 
-	        </when>
-	        <when test="reply_order == 'desc' ">
-	        		ORDER BY reply_group desc, reply_no desc
-				) 
-				ORDER BY rownum desc 
-	        </when>
-	        <otherwise>
+			<choose>
+				<when test="reply_order == 'asc' ">
 					ORDER BY reply_group asc, reply_no asc
-				)
-	        </otherwise>
-        </choose>
-	    <![CDATA[
-			)r INNER JOIN user_tb u 
-			ON r.user_no = u.user_no 
-			WHERE rnum between #{startRow} and #{endRow} 
-		]]> 
+					)
+				</when>
+				<when test="reply_order == 'desc' ">
+					ORDER BY reply_group desc, reply_no desc
+					)
+					ORDER BY rownum desc 
+				</when>
+				<otherwise>
+					ORDER BY reply_group asc, reply_no asc 
+					)
+				</otherwise>
+			</choose>
+			
+	)r INNER JOIN user_tb u
+	ON r.user_no = u.user_no
+	WHERE rnum between #{startRow} and #{endRow} 
 	</select>
 	
 	<!-- 댓글 추가 및 수정 -->
 	<insert id="insertReply" parameterType="hashmap">
-		<![CDATA[
-			MERGE INTO reply_tb 
-			USING DUAL 
-			on (#{reply_no} > 0)
-			 
-			-- 기존 댓글이 있을 때 댓글 갱신
-			UPDATE SET reply_content = #{reply_content}, 
-						reply_updatedate = sysdate 
-			WHERE reply_no = #{reply_no} 
-			AND user_no = (
-					SELECT user_no 
-					FROM user_tb 
-					WHERE user_id = #{user_id} 
-				) 
-			
-			-- 기존 댓글 없을 때 댓글 추가 
-			INSERT INTO reply_tb( 
-				board_no, reply_group, reply_dept, reply_content, user_no 
+		MERGE INTO reply_tb 
+		USING DUAL 
+		on (#{reply_no} > 0)
+		 
+		-- 기존 댓글이 있을 때 댓글 갱신
+		UPDATE SET reply_content = #{reply_content}, 
+					reply_updatedate = sysdate 
+		WHERE reply_no = #{reply_no} 
+		AND user_no = (
+			SELECT user_no 
+			FROM user_tb 
+			WHERE LOWER(user_id) = LOWER(#{user_id}) 
+		) 
+		
+		-- 기존 댓글 없을 때 댓글 추가 
+		INSERT INTO reply_tb( 
+			board_no, reply_group, reply_dept, reply_content, user_no 
+		) 
+		VALUES ( 
+			#{board_no}, #{reply_group}, #{reply_dept}, #{reply_content}, 
+			(
+				SELECT user_no 
+				FROM user_tb 
+				WHERE LOWER(user_id) = LOWER(#{user_id}) 
 			) 
-			VALUES ( 
-				#{board_no}, #{reply_group}, #{reply_dept}, #{reply_content}, 
-				(
-					SELECT user_no 
-					FROM user_tb 
-					WHERE user_id = #{user_id} 
-				) 
-	        )
-		]]>
+        )
 	</insert>
 	
 	<!-- 댓글 삭제 -->
 	<delete id="deleteReply">
-		<![CDATA[	
-			delete from reply_tb 
-			where reply_no = #{reply_no} 
-			AND user_no = 
-				(
-					SELECT user_no 
-					FROM user_tb 
-					WHERE user_id = #{user_id} 
-				) 
-		]]>
+		delete from reply_tb 
+		where reply_no = #{reply_no} 
+		AND user_no = 
+		(
+			SELECT user_no 
+			FROM user_tb 
+			WHERE LOWER(user_id) = LOWER(#{user_id})  
+		) 
 	</delete>
 	
 </mapper>
