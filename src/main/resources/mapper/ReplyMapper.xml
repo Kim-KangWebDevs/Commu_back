@@ -53,33 +53,35 @@
 	</select>
 	
 	<!-- 댓글 추가 및 수정 -->
-	<insert id="insertReply" parameterType="hashmap">
-		MERGE INTO reply_tb 
-		USING DUAL 
-		on (#{reply_no} > 0)
-		 
-		-- 기존 댓글이 있을 때 댓글 갱신
-		UPDATE SET reply_content = #{reply_content}, 
-					reply_updatedate = sysdate 
-		WHERE reply_no = #{reply_no} 
-		AND user_no = (
-			SELECT user_no 
-			FROM user_tb 
-			WHERE LOWER(user_id) = LOWER(#{user_id}) 
-		) 
-		
-		-- 기존 댓글 없을 때 댓글 추가 
-		INSERT INTO reply_tb( 
-			board_no, reply_group, reply_dept, reply_content, user_no 
-		) 
-		VALUES ( 
-			#{board_no}, #{reply_group}, #{reply_dept}, #{reply_content}, 
-			(
+	<insert id="insertReply" parameterType="com.Commu_back.vo.ReplyVO">
+		<![CDATA[
+			MERGE INTO reply_tb 
+			USING DUAL 
+			on (#{reply_no} > 0)
+			 
+			-- 기존 댓글이 있을 때 댓글 갱신
+			-- 인증값으로 받아온 유저 아이디를 유저 테이블에서 유저 번호로 조회 후
+			-- 해당 게시글의 작성자와 같은지 매칭  
+			WHEN MATCHED THEN
+			UPDATE SET reply_content = #{reply_content}, 
+						reply_updatedate = sysdate 
+			WHERE reply_no = #{reply_no} 
+			AND user_no = (
 				SELECT user_no 
 				FROM user_tb 
 				WHERE LOWER(user_id) = LOWER(#{user_id}) 
 			) 
-        )
+			
+			-- 기존 댓글 없을 때 댓글 추가 
+			WHEN NOT MATCHED THEN 
+			INSERT (board_no, reply_group, reply_dept, reply_content, user_no) 
+			VALUES ( #{board_no}, #{reply_group}, #{reply_dept}, #{reply_content}, (
+				SELECT user_no 
+				FROM user_tb 
+				WHERE LOWER(user_id) = LOWER(#{user_id}) 
+				) 
+	        )
+        ]]>
 	</insert>
 	
 	<!-- 댓글 삭제 -->

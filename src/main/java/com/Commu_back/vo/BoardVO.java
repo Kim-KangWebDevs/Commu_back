@@ -14,15 +14,16 @@ import lombok.NoArgsConstructor;
 @Builder
 public class BoardVO {
 	
-	private int board_no; 
+	private Integer board_no; 
     private String board_category;
-    private int user_no;
+    private Integer user_no;
+    private String user_id;
     private String board_title; 
     private String board_content; 
-    private int board_views;
-    private int board_good;
-    private int board_bad;
+    private Integer board_views;
+    private Integer board_good;
+    private Integer board_bad;
     private String board_regdate; 
-    private String board_updatedate; 
+    private String board_updatedate;
 
 }

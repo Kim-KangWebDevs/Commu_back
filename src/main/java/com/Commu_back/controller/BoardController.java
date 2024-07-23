@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Commu_back.service.BoardService;
+import com.Commu_back.vo.BoardVO;
 
 @RestController
 @RequestMapping("/board/*")
@@ -42,10 +43,10 @@ public class BoardController {
 	@GetMapping("/addcategory.do")
 	public ResponseEntity<Integer> addCategory(@RequestParam("id") String board_category,
 			@RequestParam("name") String board_category_desc) {
-		
+
 		// 관리자 권한 확인 추가
 		// *
-		
+
 		log.info("카테고리 추가");
 		return ResponseEntity.ok(boardservice.addCategory(board_category, board_category_desc));
 	}
@@ -56,7 +57,7 @@ public class BoardController {
 
 		// 관리자 권한 확인 추가
 		// *
-		
+
 		log.info("카테고리 삭제");
 		return ResponseEntity.ok(boardservice.removeCategory(board_category));
 	}
@@ -71,16 +72,18 @@ public class BoardController {
 
 	// 게시글 요청
 	// 게시글 목록 조회
-	@PostMapping("/boardlist.do")
-	public ResponseEntity<Map<String, Object>> boardList(@RequestBody Map<String, Object> board_map) {
+	@PostMapping("/listboard.do")
+	public ResponseEntity<Map<String, Object>> boardList(@RequestParam("board_category") String board_category,
+			@RequestParam("target") String target, @RequestParam("keyword") String keyword,
+			@RequestParam("page") Integer page) {
 
 		log.info("게시글 목록 조회");
-		return ResponseEntity.ok(boardservice.fineBoardList(board_map));
+		return ResponseEntity.ok(boardservice.fineBoardList(board_category, target, keyword, page));
 
 	}
 
 	// 게시글 조회
-	@GetMapping("/boarddetail.do")
+	@GetMapping("/detailboard.do")
 	public ResponseEntity<Map<String, Object>> boardDetail(@RequestParam("no") int board_no) {
 
 		log.info("게시글 조회");
@@ -89,19 +92,20 @@ public class BoardController {
 	}
 
 	// 게시글 추가 및 수정
-	@PostMapping("/boardwrite.do")
-	public ResponseEntity<Integer> boardWrite(@RequestBody Map<String, Object> board_map) {
+	@PostMapping("/addboard.do")
+	public ResponseEntity<Integer> boardWrite(@RequestBody BoardVO boardVO) {
 
 		// session.getUserId();
 		String user_id = "user001";
+		boardVO.setUser_id(user_id);
 
 		log.info("게시글 추가 및 수정");
-		return ResponseEntity.ok(boardservice.addBoard(board_map, user_id));
+		return ResponseEntity.ok(boardservice.addBoard(boardVO));
 
 	}
 
 	// 게시글 삭제
-	@PostMapping("/boardremove.do")
+	@PostMapping("/removeboard.do")
 	public ResponseEntity<Integer> boardRemove(@RequestParam("no") int board_no) {
 
 		// session.getUserId();
@@ -113,7 +117,7 @@ public class BoardController {
 	}
 
 	// 게시글 조회수 증가
-	@GetMapping("/boardviews.do")
+	@GetMapping("/viewsboard.do")
 	public ResponseEntity<Integer> boardViews(@RequestParam("no") int board_no) {
 
 		log.info("게시글 조회수 증가");

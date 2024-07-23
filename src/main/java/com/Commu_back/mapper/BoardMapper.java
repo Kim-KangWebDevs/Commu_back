@@ -6,6 +6,8 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.Commu_back.vo.BoardVO;
+
 @Mapper
 public interface BoardMapper {
 
@@ -36,7 +38,7 @@ public interface BoardMapper {
 	public Map<String, Object> selectBoard(@Param("board_no") int board_no);
 
 	// 게시글 추가 및 수정
-	public int insertBoard(Map<String, Object> board_map);
+	public int insertBoard(BoardVO boardVO);
 
 	// 게시글 삭제
 	public int deleteBoard(@Param("board_no") int board_no, @Param("user_id") String user_id);

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Commu_back.service.ReplyService;
+import com.Commu_back.vo.ReplyVO;
 
 @RestController
 @RequestMapping("/reply")
@@ -28,28 +29,30 @@ public class ReplyController {
 	}
 
 	// 댓글 목록 조회
-	@PostMapping("/replylist.do")
-	public ResponseEntity<Map<String, Object>> replyList(@RequestBody Map<String, Object> reply_map) throws Exception {
+	@PostMapping("/listreply.do")
+	public ResponseEntity<Map<String, Object>> replyList(@RequestParam("board_no") int board_no,
+			@RequestParam("page") int page) throws Exception {
 
 		log.info("댓글 목록 조회");
-		return ResponseEntity.ok(replyservice.findReplylist(reply_map));
+		return ResponseEntity.ok(replyservice.findReplylist(board_no, page));
 
 	}
 
 	// 댓글 추가 및 수정
-	@PostMapping("/replywrite.do")
-	public ResponseEntity<Integer> writereply(@RequestBody Map<String, Object> reply_map) throws Exception {
+	@PostMapping("/addreply.do")
+	public ResponseEntity<Integer> writereply(@RequestBody ReplyVO replyVO) throws Exception {
 
 		// session.getUserId();
 		String user_id = "user001";
+		replyVO.setUser_id(user_id);
 
 		log.info("댓글 추가 및 수정");
-		return ResponseEntity.ok(replyservice.addReply(reply_map, user_id));
+		return ResponseEntity.ok(replyservice.addReply(replyVO));
 
 	}
 
 	// 댓글 삭제
-	@PostMapping("/replyremove.do")
+	@PostMapping("/removereply.do")
 	public ResponseEntity<Integer> removeList(@RequestParam("rno") int reply_no) throws Exception {
 
 		// session.getUserId();

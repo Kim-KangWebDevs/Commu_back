@@ -174,33 +174,36 @@
 	</select>
 
 	<!-- 게시글 추가 -->
-	<insert id="insertBoard" parameterType="hashmap">
-		merge INTO board_tb 
-		using dual 
-		ON (#{board_no} > 0) 
-		
-		-- 기존 게시글이 있을 때 글 갱신 
-		-- 인증값으로 받아온 유저 아이디를 유저 테이블에서 유저 번호로 조회 후
-		-- 해당 게시글의 작성자와 같은지 매칭  
-		WHEN matched then 
-		UPDATE SET board_title = #{board_title}, 
-					board_content = #{board_content}, 
-					board_UPDATEdate = sysdate 
-		WHERE board_no = #{board_no} 
-		AND user_no = (
-			SELECT user_no  
-			FROM user_tb 
-			WHERE LOWER(user_id) = LOWER(#{user_id}) 
-		}
-		
-		-- 기존 게시글이 없을 때 글 추가 
-		WHEN not matched then 
-		INSERT (board_title, board_content, board_category, user_no) 
-		VALUES (#{board_title}, #{board_content}, #{board_category}, (
-			SELECT user_no  
-			FROM user_tb 
-			WHERE LOWER(user_id) = LOWER(#{user_id})
-		) 
+	<insert id="insertBoard" parameterType="com.Commu_back.vo.BoardVO">
+		<![CDATA[
+			MERGE INTO board_tb 
+			USING DUAL 
+			ON (#{board_no} > 0) 
+			
+			-- 기존 게시글이 있을 때 글 갱신 
+			-- 인증값으로 받아온 유저 아이디를 유저 테이블에서 유저 번호로 조회 후
+			-- 해당 게시글의 작성자와 같은지 매칭  
+			WHEN MATCHED THEN
+			UPDATE SET board_title = #{board_title}, 
+						board_content = #{board_content}, 
+						board_UPDATEdate = sysdate 
+			WHERE board_no = #{board_no} 
+			AND user_no = (
+				SELECT user_no  
+				FROM user_tb 
+				WHERE LOWER(user_id) = LOWER(#{user_id}) 
+			)
+			
+			-- 기존 게시글이 없을 때 글 추가 
+			WHEN NOT MATCHED THEN 
+			INSERT (board_title, board_content, board_category, user_no) 
+			VALUES (#{board_title}, #{board_content}, #{board_category}, (
+				SELECT user_no  
+				FROM user_tb 
+				WHERE LOWER(user_id) = LOWER(#{user_id})
+				)
+			) 
+		]]>
 		<selectKey resultType="int" keyProperty="board_no"
 			order="AFTER">
 			-- 기존 글이 존재하지 않는 경우 이미지 업로드시 필요한 글 번호를 반환 

@@ -1,6 +1,7 @@
 package com.Commu_back.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.Commu_back.mapper.ReplyMapper;
 import com.Commu_back.vo.PagingVO;
+import com.Commu_back.vo.ReplyVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -31,18 +33,17 @@ public class ReplyService {
 	}
 
 	// 댓글 리스트 조회
-	public Map<String, Object> findReplylist(Map<String, Object> reply_map) {
+	public Map<String, Object> findReplylist(int board_no, int page) {
 
 		List<Map<String, Object>> reply_list = new ArrayList<>();
-		int reply_total = replymapper.selectReplyCount((int) reply_map.get("board_no"));
-
-		PagingVO pagingVO = new PagingVO(reply_total, 20, (int) reply_map.get("page"));
-		reply_map.remove("page");
+		Map<String, Object> reply_map = new HashMap<>();
+		
+		PagingVO pagingVO = new PagingVO(replymapper.selectReplyCount(board_no), 20, page);
 		reply_map.put("startRow", pagingVO.getStartRow());
 		reply_map.put("endRow", pagingVO.getEndRow());
 		reply_list = replymapper.selectReplyList(reply_map);
 
-		reply_map.clear();
+		reply_map = new HashMap<>();
 		reply_map.put("page", pagingVO);
 		reply_map.put("list", reply_list);
 
@@ -52,14 +53,14 @@ public class ReplyService {
 
 	// 댓글 추가 및 수정
 	@Transactional(rollbackFor = Exception.class)
-	public int addReply(Map<String, Object> reply_map, String user_id) {
+	public int addReply(ReplyVO replyVO) {
 
-		if (((String) reply_map.get("reply_no")).chars().allMatch(Character::isDigit) == false)
-			reply_map.put("reply_no", 0);
+		if (replyVO.getReply_no() == null)
+			replyVO.setReply_no(0);
+		if (replyVO.getReply_group() == null)
+			replyVO.setReply_group(0);
 
-		reply_map.put("user_id", user_id);
-
-		return replymapper.insertReply(reply_map);
+		return replymapper.insertReply(replyVO);
 
 	}
 
