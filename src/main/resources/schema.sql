@@ -39,11 +39,11 @@ CREATE TABLE user_role_tb(
 
 -- 댓글
 CREATE TABLE reply_tb(
+	reply_no NUMBER(16) GENERATED ALWAYS AS IDENTITY, 
     board_no NUMBER(16) NOT NULL, 
-    reply_no NUMBER(16) GENERATED ALWAYS AS IDENTITY, 
     user_no NUMBER(16) NOT NULL,
-    reply_group NUMBER(16) NOT NULL,
-    reply_dept NUMBER(2) DEFAULT 1 NOT NULL,
+    reply_group NUMBER(16) DEFAULT 0 NOT NULL,
+    reply_dept NUMBER(2) DEFAULT 0 NOT NULL,
     reply_content varchar2(128) NOT NULL,
     reply_regdate DATE DEFAULT sysdate, 
     reply_updatedate DATE DEFAULT sysdate, 
