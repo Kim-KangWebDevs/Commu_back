@@ -36,9 +36,9 @@ public class TestController {
 
 	// 2. 카테고리 추가
 	@PostMapping("/addcategory.do")
-	public ResponseEntity<Integer> addCategory(@RequestParam("id") String board_category,
-			@RequestParam("name") String board_category_desc) {
-		return ResponseEntity.ok(boardservice.addCategory(board_category, board_category_desc));
+	public ResponseEntity<Integer> addCategory(@RequestParam("id") String boardCategory,
+			@RequestParam("name") String boardCategoryDesc) {
+		return ResponseEntity.ok(boardservice.addCategory(boardCategory, boardCategoryDesc));
 	}
 
 	// 3. 게시글 추가
