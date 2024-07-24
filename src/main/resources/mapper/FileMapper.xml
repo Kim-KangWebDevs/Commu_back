@@ -10,16 +10,16 @@
 		INSERT INTO file_tb (board_no, file_src, file_desc)
 		<foreach collection="imagelist" item="item"
 			separator="UNION ALL">
-			SELECT #{board_no}, #{file_src}, #{file_desc},
+			SELECT #{boardNo}, #{fileSrc}, #{fileDesc},
 			FROM DUAL
 		</foreach>
 	</insert>
 
 	<select id="selectImageList"
 		resultType="com.Commu_back.vo.FileVO">
-		SELECT file_src, file_desc
+		SELECT file_src as fileSrc, file_desc as fileDesc 
 		FROM file_tb
-		WHERE board_no = #{board_no}
+		WHERE board_no = #{boardNo}
 	</select>
 
 </mapper>

@@ -1,7 +1,6 @@
 package com.Commu_back.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,38 +31,37 @@ public class FileController {
 
 	// 서버에 이미지 추가
 	@PostMapping("/file/uploadimage.do")
-	public ResponseEntity<List<String>> uploadImage(@RequestParam("uploadFile") List<MultipartFile> imagelist)
+	public ResponseEntity<List<String>> uploadImage(@RequestParam("imageList") List<MultipartFile> imageList)
 			throws Exception {
 
 		log.info("서버에 이미지 추가");
-		return ResponseEntity.ok(fileservice.addImageFile(imagelist));
+		return ResponseEntity.ok(fileservice.addImageFile(imageList));
 
 	}
 
 	// DB에 이미지 추가
 	@PostMapping("/file/registimage.do")
-	public ResponseEntity<Integer> registImage(@RequestBody Map<String, Object> image_map) throws Exception {
+	public ResponseEntity<Integer> registImage(@RequestBody FileVO fileVO) throws Exception {
 
 		log.info("DB에 이미지 추가");
-		return ResponseEntity.ok(fileservice.addImage(image_map));
+		return ResponseEntity.ok(fileservice.addImage(fileVO));
 
 	}
 
 	// 이미지 조회
 	@GetMapping(value = "/imageview.do", produces = MediaType.IMAGE_JPEG_VALUE)
-	public ResponseEntity<byte[]> imageDetail(@RequestParam("id") String image_id) throws Exception {
+	public ResponseEntity<byte[]> imageDetail(@RequestParam("src") String imageSrc) throws Exception {
 
 		log.info("이미지 조회");
-		return ResponseEntity.ok(fileservice.findImageView(image_id));
+		return ResponseEntity.ok(fileservice.findImageView(imageSrc));
 	}
 
 	// 게시글 이미지 리스트 조회
 	@PostMapping("/file/getfilelist.do")
-	public ResponseEntity<List<FileVO>> fileList(@RequestParam("btype") String board_category,
-			@RequestParam("bno") int board_no) throws Exception {
+	public ResponseEntity<List<FileVO>> fileList(@RequestParam("bno") int boardNo) throws Exception {
 
 		log.info("게시글 이미지 리스트 조회");
-		return ResponseEntity.ok(fileservice.findFileList(board_category, board_no));
+		return ResponseEntity.ok(fileservice.findFileList(boardNo));
 
 	}
 }

@@ -8,7 +8,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.io.FilenameUtils;
@@ -36,7 +35,7 @@ public class FileService {
 	}
 
 	// 서버에 이미지 추가
-	public List<String> addImageFile(List<MultipartFile> imagelist) throws Exception {
+	public List<String> addImageFile(List<MultipartFile> imagelist) throws IOException{
 
 		UUID uuid;
 		String fileType, fileName;
@@ -71,14 +70,14 @@ public class FileService {
 
 	// DB에 이미지 추가
 	@Transactional(rollbackFor = Exception.class)
-	public int addImage(Map<String, Object> image_map) throws Exception {
+	public int addImage(FileVO fileVO) {
 
-		return filemapper.insertImage(image_map);
+		return filemapper.insertImage(fileVO);
 	}
 
-	public byte[] findImageView(String image_id) throws IOException {
+	public byte[] findImageView(String imageSrc) throws IOException {
 
-		String imageUrl = imagePath + image_id;
+		String imageUrl = imagePath + imageSrc;
 		Path getPath = Paths.get(imageUrl);
 
 		// 파일이 존재하면 view로 이미지 반환, 실패시 기본 이미지 반환
@@ -86,8 +85,9 @@ public class FileService {
 				.toByteArray(Files.exists(getPath) ? new FileInputStream(imageUrl) : new FileInputStream(defaultImage));
 	}
 
-	public List<FileVO> findFileList(String board_category, int board_no) throws Exception {
+	// DB에서 이미지 조회
+	public List<FileVO> findFileList(int boardNo) {
 
-		return filemapper.selectImageList(board_category, board_no);
+		return filemapper.selectImageList(boardNo);
 	}
 }

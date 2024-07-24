@@ -54,8 +54,8 @@ CREATE TABLE reply_tb(
 CREATE TABLE file_tb(
     file_no NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     board_no NUMBER NOT NULL,
-    board_category varchar2(32) NOT NULL,
-    file_name varchar2(256) NOT NULL, 
+    file_src varchar2(256) NOT NULL, 
+    file_desc varchar2(256) NOT NULL, 
     file_regdate DATE DEFAULT sysdate 
 );
 
