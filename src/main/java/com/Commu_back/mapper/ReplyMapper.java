@@ -12,7 +12,7 @@ import com.Commu_back.vo.ReplyVO;
 public interface ReplyMapper {
 
 	// 댓글 총 개수 조회
-	public int selectReplyCount(@Param("board_no") int board_no);
+	public int selectReplyCount(@Param("boardNo") int board_no);
 
 	// 댓글 리스트 조회
 	public List<Map<String, Object>> selectReplyList(Map<String, Object> reply_map);
@@ -21,5 +21,5 @@ public interface ReplyMapper {
 	public int insertReply(ReplyVO replyVO);
 
 	// 댓글 삭제
-	public int deleteReply(@Param("user_id") String user_id, @Param("reply_no") int reply_no);
+	public int deleteReply(@Param("userId") String user_id, @Param("replyNo") int reply_no);
 }

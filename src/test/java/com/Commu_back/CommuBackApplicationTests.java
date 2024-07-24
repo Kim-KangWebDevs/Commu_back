@@ -160,10 +160,10 @@ class CommuBackApplicationTests {
 		// 1. 게시글 리스트 생성
 		for (int i = 1; i < BOARD_MAX + 1; i++) {
 			boardVO = new BoardVO();
-			boardVO.setUser_id(("user" + ((int) (Math.random() * (USER_MAX - 1)) + 2)));
-			boardVO.setBoard_category(categories[(int) (Math.random() * categories.length)][1]);
-			boardVO.setBoard_title(i + "번째 게시글");
-			boardVO.setBoard_content(i + "번째로 생성된 게시글의 내용입니다.\n이 글은 테스트용으로 작성된 " + i + "번째 글입니다. ");
+			boardVO.setUserId(("user" + ((int) (Math.random() * (USER_MAX - 1)) + 2)));
+			boardVO.setBoardCategory(categories[(int) (Math.random() * categories.length)][1]);
+			boardVO.setBoardTitle(i + "번째 게시글");
+			boardVO.setBoardContent(i + "번째로 생성된 게시글의 내용입니다.\n이 글은 테스트용으로 작성된 " + i + "번째 글입니다. ");
 			boards.add(boardVO);
 		}
 
@@ -204,22 +204,22 @@ class CommuBackApplicationTests {
 		// 1. 댓글 리스트 생성
 		for (int i = 0; i < REPLY_MAX; i++) {
 			replyVO = new ReplyVO();
-			replyVO.setBoard_no((int) (Math.random() * (BOARD_MAX - 1) + 1));
-			replyVO.setUser_id(("user" + ((int) (Math.random() * (USER_MAX - 1)) + 2)));
-			replyVO.setReply_content(i + "번째로 생성된 댓글의 내용입니다. ");
-			replyVO.setReply_dept(0);
-			replyVO.setReply_group(0);
+			replyVO.setBoardNo((int) (Math.random() * (BOARD_MAX - 1) + 1));
+			replyVO.setUserId(("user" + ((int) (Math.random() * (USER_MAX - 1)) + 2)));
+			replyVO.setReplyContent(i + "번째로 생성된 댓글의 내용입니다. ");
+			replyVO.setReplyDept(0);
+			replyVO.setReplyGroup(0);
 			replys.add(replyVO);
 		}
 
 		// 2. 대댓글 리스트 생성
 		for (int i = 0; i < REREPLY_MAX; i++) {
 			replyVO = new ReplyVO();
-			replyVO.setBoard_no((int) (Math.random() * (BOARD_MAX - 1) + 1));
-			replyVO.setUser_id(("user" + ((int) (Math.random() * (USER_MAX - 1)) + 2)));
-			replyVO.setReply_content((i + REPLY_MAX) + "번째로 생성된 댓글의 내용입니다.\n이 이것은 대댓글 입니다. ");
-			replyVO.setReply_dept(1);
-			replyVO.setReply_group((int) (Math.random() * REPLY_MAX - 1) + 1);
+			replyVO.setBoardNo((int) (Math.random() * (BOARD_MAX - 1) + 1));
+			replyVO.setUserId(("user" + ((int) (Math.random() * (USER_MAX - 1)) + 2)));
+			replyVO.setReplyContent((i + REPLY_MAX) + "번째로 생성된 댓글의 내용입니다.\n이 이것은 대댓글 입니다. ");
+			replyVO.setReplyDept(1);
+			replyVO.setReplyGroup((int) (Math.random() * REPLY_MAX - 1) + 1);
 			replys.add(replyVO);
 		}
 

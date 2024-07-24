@@ -6,44 +6,45 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.Commu_back.vo.BoardCategoryVO;
 import com.Commu_back.vo.BoardVO;
 
 @Mapper
 public interface BoardMapper {
 
 	// 카테고리 총 개수 조회
-	public int selectCategoryCount(@Param("board_category_desc") String board_category_desc);
+	public int selectCategoryCount(@Param("boardCategoryDesc") String boardCategoryDesc);
 
 	// 카테고리 목록 조회
-	public List<Map<String, Object>> selectCategoryList(@Param("board_category_desc") String board_category_desc,
+	public List<BoardCategoryVO> selectCategoryList(@Param("boardCategoryDesc") String boardCategoryDesc,
 			@Param("startRow") int startRow, @Param("endRow") int endRow);
 
 	// 카테고리 추가
-	public int insertCategory(@Param("board_category") String board_category,
-			@Param("board_category_desc") String board_category_desc);
+	public int insertCategory(@Param("boardCategory") String boardCategory,
+			@Param("boardCategoryDesc") String boardCategoryDesc);
 
 	// 카테고리 삭제
-	public int deleteCategory(@Param("board_category") String board_category);
+	public int deleteCategory(@Param("boardCategory") String boardCategory);
 
 	// 카테고리 이름 조회
-	public String selectCategoryDesc(@Param("board_category") String board_category);
+	public String selectCategoryDesc(@Param("boardCategory") String boardCategory);
 
 	// 게시글 총 개수 조회
-	public int selectBoardCount(Map<String, Object> board_map);
+	public int selectBoardCount(Map<String, Object> boardMap);
 
 	// 게시글 목록 조회
-	public List<Map<String, Object>> selectBoardList(Map<String, Object> board_map);
+	public List<Map<String, Object>> selectBoardList(Map<String, Object> boardMap);
 
 	// 게시글 조회
-	public Map<String, Object> selectBoard(@Param("board_no") int board_no);
+	public Map<String, Object> selectBoard(@Param("boardNo") int boardNo);
 
 	// 게시글 추가 및 수정
 	public int insertBoard(BoardVO boardVO);
 
 	// 게시글 삭제
-	public int deleteBoard(@Param("board_no") int board_no, @Param("user_id") String user_id);
+	public int deleteBoard(@Param("boardNo") int boardNo, @Param("userId") String userId);
 
 	// 게시글 조회수 증가
-	public int updateBoardViews(@Param("board_no") int board_no);
+	public int updateBoardViews(@Param("boardNo") int boardNo);
 
 }

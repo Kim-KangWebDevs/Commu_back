@@ -26,28 +26,28 @@ public class ReplyService {
 	}
 
 	// 댓글 개수 조회
-	public int findReplyCount(int board_no) {
+	public int findReplyCount(int boardNo) {
 
-		return replymapper.selectReplyCount(board_no);
+		return replymapper.selectReplyCount(boardNo);
 
 	}
 
 	// 댓글 리스트 조회
-	public Map<String, Object> findReplylist(int board_no, int page) {
+	public Map<String, Object> findReplylist(int boardNo, int page) {
 
-		List<Map<String, Object>> reply_list = new ArrayList<>();
-		Map<String, Object> reply_map = new HashMap<>();
+		List<Map<String, Object>> replyList = new ArrayList<>();
+		Map<String, Object> replyMap = new HashMap<>();
 		
-		PagingVO pagingVO = new PagingVO(replymapper.selectReplyCount(board_no), 20, page);
-		reply_map.put("startRow", pagingVO.getStartRow());
-		reply_map.put("endRow", pagingVO.getEndRow());
-		reply_list = replymapper.selectReplyList(reply_map);
+		PagingVO pagingVO = new PagingVO(replymapper.selectReplyCount(boardNo), 20, page);
+		replyMap.put("startRow", pagingVO.getStartRow());
+		replyMap.put("endRow", pagingVO.getEndRow());
+		replyList = replymapper.selectReplyList(replyMap);
 
-		reply_map = new HashMap<>();
-		reply_map.put("page", pagingVO);
-		reply_map.put("list", reply_list);
+		replyMap = new HashMap<>();
+		replyMap.put("page", pagingVO);
+		replyMap.put("list", replyList);
 
-		return reply_map;
+		return replyMap;
 
 	}
 
@@ -55,10 +55,10 @@ public class ReplyService {
 	@Transactional(rollbackFor = Exception.class)
 	public int addReply(ReplyVO replyVO) {
 
-		if (replyVO.getReply_no() == null)
-			replyVO.setReply_no(0);
-		if (replyVO.getReply_group() == null)
-			replyVO.setReply_group(0);
+		if (replyVO.getReplyNo() == null)
+			replyVO.setReplyNo(0);
+		if (replyVO.getReplyGroup() == null)
+			replyVO.setReplyGroup(0);
 
 		return replymapper.insertReply(replyVO);
 
@@ -66,9 +66,9 @@ public class ReplyService {
 
 	// 댓글 삭제
 	@Transactional(rollbackFor = Exception.class)
-	public int removeReply(String user_id, int reply_no) {
+	public int removeReply(String userId, int replyNo) {
 
-		return replymapper.deleteReply(user_id, reply_no);
+		return replymapper.deleteReply(userId, replyNo);
 
 	}
 

@@ -30,11 +30,11 @@ public class ReplyController {
 
 	// 댓글 목록 조회
 	@PostMapping("/listreply.do")
-	public ResponseEntity<Map<String, Object>> replyList(@RequestParam("board_no") int board_no,
-			@RequestParam("page") int page) throws Exception {
+	public ResponseEntity<Map<String, Object>> replyList(@RequestParam("bno") int boardNo,
+			@RequestParam("p") int page) throws Exception {
 
 		log.info("댓글 목록 조회");
-		return ResponseEntity.ok(replyservice.findReplylist(board_no, page));
+		return ResponseEntity.ok(replyservice.findReplylist(boardNo, page));
 
 	}
 
@@ -43,8 +43,8 @@ public class ReplyController {
 	public ResponseEntity<Integer> writereply(@RequestBody ReplyVO replyVO) throws Exception {
 
 		// session.getUserId();
-		String user_id = "user001";
-		replyVO.setUser_id(user_id);
+		String userId = "user001";
+		replyVO.setUserId(userId);
 
 		log.info("댓글 추가 및 수정");
 		return ResponseEntity.ok(replyservice.addReply(replyVO));
@@ -53,13 +53,13 @@ public class ReplyController {
 
 	// 댓글 삭제
 	@PostMapping("/removereply.do")
-	public ResponseEntity<Integer> removeList(@RequestParam("rno") int reply_no) throws Exception {
+	public ResponseEntity<Integer> removeList(@RequestParam("rno") int replyNo) throws Exception {
 
 		// session.getUserId();
-		String user_id = "user001";
+		String userId = "user001";
 
 		log.info("댓글 삭제");
-		return ResponseEntity.ok(replyservice.removeReply(user_id, reply_no));
+		return ResponseEntity.ok(replyservice.removeReply(userId, replyNo));
 
 	}
 }

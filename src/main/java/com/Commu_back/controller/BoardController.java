@@ -32,62 +32,62 @@ public class BoardController {
 	// 게시판 카테고리 요청
 	// 카테고리 목록 조회
 	@GetMapping("/listcategory.do")
-	public ResponseEntity<Map<String, Object>> listCategory(@RequestParam("target") String board_category_desc,
-			@RequestParam("page") int page) {
+	public ResponseEntity<Map<String, Object>> listCategory(@RequestParam("target") String boardCategoryDesc,
+			@RequestParam("p") int page) {
 
 		log.info("카테고리 목록 조회");
-		return ResponseEntity.ok(boardservice.findCategoryList(board_category_desc, page));
+		return ResponseEntity.ok(boardservice.findCategoryList(boardCategoryDesc, page));
 	}
 
 	// 카테고리 추가
 	@GetMapping("/addcategory.do")
-	public ResponseEntity<Integer> addCategory(@RequestParam("id") String board_category,
-			@RequestParam("name") String board_category_desc) {
+	public ResponseEntity<Integer> addCategory(@RequestParam("id") String boardCategory,
+			@RequestParam("name") String boardCategoryDesc) {
 
 		// 관리자 권한 확인 추가
 		// *
 
 		log.info("카테고리 추가");
-		return ResponseEntity.ok(boardservice.addCategory(board_category, board_category_desc));
+		return ResponseEntity.ok(boardservice.addCategory(boardCategory, boardCategoryDesc));
 	}
 
 	// 카테고리 삭제
 	@GetMapping("/removecategory.do")
-	public ResponseEntity<Integer> removeCategory(@RequestParam("id") String board_category) {
+	public ResponseEntity<Integer> removeCategory(@RequestParam("id") String boardCategory) {
 
 		// 관리자 권한 확인 추가
 		// *
 
 		log.info("카테고리 삭제");
-		return ResponseEntity.ok(boardservice.removeCategory(board_category));
+		return ResponseEntity.ok(boardservice.removeCategory(boardCategory));
 	}
 
 	// 카테고리 이름 조회
 	@GetMapping("/desccategory.do")
-	public ResponseEntity<String> descCategory(@RequestParam("id") String board_category) {
+	public ResponseEntity<String> descCategory(@RequestParam("id") String boardCategory) {
 
 		log.info("카테고리 이름 조회");
-		return ResponseEntity.ok(boardservice.findCategoryDesc(board_category));
+		return ResponseEntity.ok(boardservice.findCategoryDesc(boardCategory));
 	}
 
 	// 게시글 요청
 	// 게시글 목록 조회
 	@PostMapping("/listboard.do")
-	public ResponseEntity<Map<String, Object>> boardList(@RequestParam("board_category") String board_category,
+	public ResponseEntity<Map<String, Object>> boardList(@RequestParam("boardCategory") String boardCategory,
 			@RequestParam("target") String target, @RequestParam("keyword") String keyword,
-			@RequestParam("page") Integer page) {
+			@RequestParam("p") Integer page) {
 
 		log.info("게시글 목록 조회");
-		return ResponseEntity.ok(boardservice.fineBoardList(board_category, target, keyword, page));
+		return ResponseEntity.ok(boardservice.fineBoardList(boardCategory, target, keyword, page));
 
 	}
 
 	// 게시글 조회
 	@GetMapping("/detailboard.do")
-	public ResponseEntity<Map<String, Object>> boardDetail(@RequestParam("no") int board_no) {
+	public ResponseEntity<Map<String, Object>> boardDetail(@RequestParam("no") int boardNo) {
 
 		log.info("게시글 조회");
-		return ResponseEntity.ok(boardservice.fineBoard(board_no));
+		return ResponseEntity.ok(boardservice.fineBoard(boardNo));
 
 	}
 
@@ -96,8 +96,8 @@ public class BoardController {
 	public ResponseEntity<Integer> boardWrite(@RequestBody BoardVO boardVO) {
 
 		// session.getUserId();
-		String user_id = "user001";
-		boardVO.setUser_id(user_id);
+		String userId = "user001";
+		boardVO.setUserId(userId);
 
 		log.info("게시글 추가 및 수정");
 		return ResponseEntity.ok(boardservice.addBoard(boardVO));
@@ -106,22 +106,22 @@ public class BoardController {
 
 	// 게시글 삭제
 	@PostMapping("/removeboard.do")
-	public ResponseEntity<Integer> boardRemove(@RequestParam("no") int board_no) {
+	public ResponseEntity<Integer> boardRemove(@RequestParam("no") int boardNo) {
 
 		// session.getUserId();
-		String user_id = "user001";
+		String userId = "user001";
 
 		log.info("게시글 삭제");
-		return ResponseEntity.ok(boardservice.removeBoard(board_no, user_id));
+		return ResponseEntity.ok(boardservice.removeBoard(boardNo, userId));
 
 	}
 
 	// 게시글 조회수 증가
 	@GetMapping("/viewsboard.do")
-	public ResponseEntity<Integer> boardViews(@RequestParam("no") int board_no) {
+	public ResponseEntity<Integer> boardViews(@RequestParam("no") int boardNo) {
 
 		log.info("게시글 조회수 증가");
-		return ResponseEntity.ok(boardservice.addBoardViews(board_no));
+		return ResponseEntity.ok(boardservice.addBoardViews(boardNo));
 	}
 
 }

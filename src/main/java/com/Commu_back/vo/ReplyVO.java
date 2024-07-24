@@ -8,13 +8,13 @@ import lombok.Data;
 @Component
 public class ReplyVO {
 
-	private Integer board_no; 
-    private Integer reply_no;
-    private Integer user_no;
-    private String user_id;
-    private Integer reply_group;
-    private Integer reply_dept;
-    private String reply_content; 
-    private String reply_regdate;
+	private Integer boardNo; 
+    private Integer replyNo;
+    private Integer userNo;
+    private String userId;
+    private Integer replyGroup;
+    private Integer replyDept;
+    private String replyContent; 
+    private String replyRegdate;
 
 }

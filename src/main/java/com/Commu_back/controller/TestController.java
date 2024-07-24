@@ -31,7 +31,6 @@ public class TestController {
 	// 1.유저추가
 	@PostMapping("/adduser.do")
 	public ResponseEntity<Integer> setUser(@RequestBody UserVO userVO) throws Exception {
-		System.out.println("test");
 		return ResponseEntity.ok(userservice.setUser(userVO));
 	}
 

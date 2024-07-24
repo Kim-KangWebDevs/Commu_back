@@ -12,9 +12,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class BoardCategoryVO {
 
-	private int board_category_no;
-	private String board_category;
-	private String board_category_desc;
-	private String board_category_regdate;
+	private int boardCategoryNo;
+	private String boardCategory;
+	private String boardCategoryDesc;
+	private String boardCategoryRegdate;
 
 }
