@@ -19,6 +19,7 @@ repositories {
 
 dependencies {
 
+	// 20240725:1517
 	// starter
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
