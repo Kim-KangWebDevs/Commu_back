@@ -48,8 +48,8 @@ public class PagingVO{
 			this.lastPage = this.endPage;
 		}
 		
-		this.prev = this.firstPage > 1;
-		this.next = this.lastPage < endPage;
+		this.prev = this.curPage > 1;
+		this.next = this.curPage < endPage;
 	}
 	
 }
