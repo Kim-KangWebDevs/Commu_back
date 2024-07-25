@@ -47,7 +47,7 @@ public class TestController {
 		return ResponseEntity.ok(boardservice.addBoard(boardVO));
 	}
 
-	// 댓글 추가 및 수정
+	// 4. 댓글 추가 및 수정
 	@PostMapping("/addreply.do")
 	public ResponseEntity<Integer> writereply(@RequestBody ReplyVO replyVO) throws Exception {
 		return ResponseEntity.ok(replyservice.addReply(replyVO));
