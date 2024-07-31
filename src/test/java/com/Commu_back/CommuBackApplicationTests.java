@@ -161,7 +161,7 @@ class CommuBackApplicationTests {
 		for (int i = 1; i < BOARD_MAX + 1; i++) {
 			boardVO = new BoardVO();
 			boardVO.setUserId(("user" + ((int) (Math.random() * (USER_MAX - 1)) + 2)));
-			boardVO.setBoardCategory(categories[(int) (Math.random() * categories.length)][1]);
+			boardVO.setBoardCategory(categories[(int) (Math.random() * categories.length)][0]);
 			boardVO.setBoardTitle(i + "번째 게시글");
 			boardVO.setBoardContent(i + "번째로 생성된 게시글의 내용입니다.\n이 글은 테스트용으로 작성된 " + i + "번째 글입니다. ");
 			boards.add(boardVO);
