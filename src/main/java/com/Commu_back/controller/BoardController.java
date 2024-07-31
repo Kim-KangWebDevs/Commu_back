@@ -32,8 +32,9 @@ public class BoardController {
 	// 게시판 카테고리 요청
 	// 카테고리 목록 조회
 	@GetMapping("/listcategory.do")
-	public ResponseEntity<Map<String, Object>> listCategory(@RequestParam("target") String boardCategoryDesc,
-			@RequestParam("p") int page) {
+	public ResponseEntity<Map<String, Object>> listCategory(
+			@RequestParam(value = "target", required = false) String boardCategoryDesc,
+			@RequestParam(value = "p", required = false) Integer page) {
 
 		log.info("카테고리 목록 조회");
 		return ResponseEntity.ok(boardservice.findCategoryList(boardCategoryDesc, page));
@@ -73,9 +74,10 @@ public class BoardController {
 	// 게시글 요청
 	// 게시글 목록 조회
 	@PostMapping("/listboard.do")
-	public ResponseEntity<Map<String, Object>> boardList(@RequestParam("boardCategory") String boardCategory,
-			@RequestParam("target") String target, @RequestParam("keyword") String keyword,
-			@RequestParam("p") Integer page) {
+	public ResponseEntity<Map<String, Object>> boardList(@RequestParam("id") String boardCategory,
+			@RequestParam(value = "target", required = false) String target,
+			@RequestParam(value = "keyword", required = false) String keyword,
+			@RequestParam(value = "p", required = false) Integer page) {
 
 		log.info("게시글 목록 조회");
 		return ResponseEntity.ok(boardservice.fineBoardList(boardCategory, target, keyword, page));

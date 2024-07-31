@@ -23,11 +23,11 @@
 		SELECT count(*)
 		FROM board_category_tb
 		<choose>
-			<when test="boardCategoryDesc == null and test.equals('')" />
-			<otherwise>
+			<when test="boardCategoryDesc != null and !boardCategoryDesc.equals('')">
 				WHERE LOWER(board_category_desc)
 				LIKE LOWER('%'||#{boardCategoryDesc}||'%')
-			</otherwise>
+			</when>
+			<otherwise />
 		</choose>
 	</select>
 
@@ -38,11 +38,11 @@
 			SELECT rownum rnum, board_category, board_category_desc 
 			FROM board_category_tb 
 			<choose>
-				<when test="boardCategoryDesc == null and test.equals('')"/>
-				<otherwise>
+				<when test="boardCategoryDesc != null and !boardCategoryDesc.equals('')">
 					WHERE LOWER(board_category_desc)
 					LIKE LOWER('%'||#{boardCategoryDesc}||'%')
-				</otherwise>
+				</when>
+				<otherwise />
 			</choose>
 		)
 		WHERE rnum BETWEEN #{startRow} and #{endRow}
@@ -112,6 +112,7 @@
 		-- 작성자의 별명을 뷰에 추가하기 위해 유저 테이블과 INNERJOIN 
 		-- 이후 페이징을 위해 설정된 row 개수만큼 column을 반환   
 		SELECT board_no AS boardNo, 
+		board_category AS boardCategory,
 		board_title AS boardTitle, 
 		b.user_no AS userNo, 
 		u.user_chr AS userChr, 
@@ -122,12 +123,12 @@
 		FROM (
 			
 			-- 2차, 페이징을 위한 순번 부여 
-			SELECT rownum rnum, board_no, board_title, user_no, board_views, board_good, board_regdate 
+			SELECT rownum rnum, board_no, board_category, board_title, user_no, board_views, board_good, board_regdate 
 			FROM (
 				
 				-- 1차, 타입별 키워드검색 후 글번호의 역순으로 정렬되지 않은 결과를 재정렬  
 				-- 통합검색 및 카테고리별 검색 지원 
-				SELECT board_no, board_title, user_no, board_views, board_good, board_regdate
+				SELECT board_no, board_category, board_title, user_no, board_views, board_good, board_regdate
 				FROM board_tb 
 		<choose>
 			<when test="board_category != 'all' and board_category != null">

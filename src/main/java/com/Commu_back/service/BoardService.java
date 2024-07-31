@@ -27,9 +27,10 @@ public class BoardService {
 	}
 
 	// 카테고리 목록 조회
-	public Map<String, Object> findCategoryList(String boardCategoryDesc, int page) {
+	public Map<String, Object> findCategoryList(String boardCategoryDesc, Integer page) {
 
-		PagingVO pagingVO = new PagingVO(boardmapper.selectCategoryCount(boardCategoryDesc), 5, page);
+		PagingVO pagingVO = new PagingVO(boardmapper.selectCategoryCount(boardCategoryDesc), 5,
+				page = page != null ? page : 1);
 		Map<String, Object> categoryMap = new HashMap<>();
 		categoryMap.put("page", pagingVO);
 		categoryMap.put("list",
