@@ -41,7 +41,7 @@ public class BoardController {
 	}
 
 	// 카테고리 추가
-	@GetMapping("/addcategory.do")
+	@PostMapping("/addcategory.do")
 	public ResponseEntity<Integer> addCategory(@RequestParam("id") String boardCategory,
 			@RequestParam("name") String boardCategoryDesc) {
 
@@ -53,7 +53,7 @@ public class BoardController {
 	}
 
 	// 카테고리 삭제
-	@GetMapping("/removecategory.do")
+	@PostMapping("/removecategory.do")
 	public ResponseEntity<Integer> removeCategory(@RequestParam("id") String boardCategory) {
 
 		// 관리자 권한 확인 추가
@@ -73,7 +73,7 @@ public class BoardController {
 
 	// 게시글 요청
 	// 게시글 목록 조회
-	@PostMapping("/listboard.do")
+	@GetMapping("/listboard.do")
 	public ResponseEntity<Map<String, Object>> boardList(@RequestParam("id") String boardCategory,
 			@RequestParam(value = "target", required = false) String target,
 			@RequestParam(value = "keyword", required = false) String keyword,
@@ -119,7 +119,7 @@ public class BoardController {
 	}
 
 	// 게시글 조회수 증가
-	@GetMapping("/viewsboard.do")
+	@PostMapping("/viewsboard.do")
 	public ResponseEntity<Integer> boardViews(@RequestParam("no") int boardNo) {
 
 		log.info("게시글 조회수 증가");

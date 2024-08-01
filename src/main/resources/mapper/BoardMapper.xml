@@ -68,7 +68,7 @@
 		SELECT count(*) 
 		FROM board_tb 
 		<choose>
-			<when test="board_category != 'all' and board_category != null">
+			<when test="board_category != null and board_category != 'all'">
 				WHERE LOWER(board_category) = LOWER(#{boardCategory}) 
 			</when>
 			<otherwise>
@@ -76,32 +76,34 @@
 			</otherwise>
 		</choose>
 		<choose>
-			<when test="target == null OR target == 'all' OR target == ''">
-				and (
-				LOWER(board_title) LIKE LOWER('%'||#{keyword}||'%')
-				OR LOWER(board_content) LIKE LOWER('%'||#{keyword}||'%') 
-				OR user_no LIKE
-					(
-						SELECT user_no
-						FROM user_tb
-						WHERE LOWER(user_chr) LIKE LOWER('%'||#{keyword}||'%')
-					)
-				)
-			</when>
-			<when test="target == 'title' ">
+			<when test="target == null or keyword == null" />
+			<when test="target == 'title'">
 				and LOWER(board_title) LIKE LOWER('%'||#{keyword}||'%')
 			</when>
-			<when test="target == 'content' ">
+			<when test="target == 'content'">
 				and LOWER(board_content) LIKE LOWER('%'||#{keyword}||'%')
 			</when>
-			<when test="target == 'writer' ">
+			<when test="target == 'writer'">
 				and user_no LIKE (
 					SELECT user_no
 					FROM user_tb
-					WHERE LOWER(user_chr) = LOWER('%'||#{keyword}||'%')
+					WHERE
+					LOWER(user_chr) = LOWER('%'||#{keyword}||'%')
 				)
 			</when>
-			<otherwise />
+			<otherwise>
+				and (
+					LOWER(board_title) LIKE LOWER('%'||#{keyword}||'%') 
+					OR LOWER(board_content) LIKE LOWER('%'||#{keyword}||'%') 
+					OR user_no LIKE
+					(
+						SELECT user_no
+						FROM user_tb
+						WHERE LOWER(user_chr) =
+						LOWER('%'||#{keyword}||'%')
+					)
+				)
+			</otherwise>
 		</choose>
 	</select>
 
@@ -112,18 +114,18 @@
 		-- 작성자의 별명을 뷰에 추가하기 위해 유저 테이블과 INNERJOIN 
 		-- 이후 페이징을 위해 설정된 row 개수만큼 column을 반환   
 		SELECT board_no AS boardNo, 
-		board_category AS boardCategory,
-		board_title AS boardTitle, 
-		b.user_no AS userNo, 
-		u.user_chr AS userChr, 
-		board_views AS boardViews, 
-		board_good AS boardGood, 
-		board_regdate AS boardRegdate, 
-		(SELECT count(*) FROM reply_tb WHERE board_no = t.board_no)reply_count AS replyCount
+				board_category AS boardCategory,
+				board_title AS boardTitle, 
+				b.user_no AS userNo, 
+				u.user_chr AS userChr, 
+				board_views AS boardViews, 
+				board_good AS boardGood, 
+				board_regdate AS boardRegdate, 
+				(SELECT count(*) FROM reply_tb r WHERE r.board_no = b.board_no) AS replyCount
 		FROM (
 			
 			-- 2차, 페이징을 위한 순번 부여 
-			SELECT rownum rnum, board_no, board_category, board_title, user_no, board_views, board_good, board_regdate 
+			SELECT rownum as rnum, board_no, board_category, board_title, user_no, board_views, board_good, board_regdate 
 			FROM (
 				
 				-- 1차, 타입별 키워드검색 후 글번호의 역순으로 정렬되지 않은 결과를 재정렬  
@@ -131,18 +133,33 @@
 				SELECT board_no, board_category, board_title, user_no, board_views, board_good, board_regdate
 				FROM board_tb 
 		<choose>
-			<when test="board_category != 'all' and board_category != null">
-				WHERE LOWER(board_category) = #{boardCategory}
+			<when test="board_category != null and board_category != 'all'">
+				WHERE LOWER(board_category) = LOWER(#{boardCategory}) 
 			</when>
 			<otherwise>
 				WHERE 1 = 1
 			</otherwise>
 		</choose>
 		<choose>
-			<when test="target == null OR target == 'all' OR target == ''">
+			<when test="target == null or keyword == null" />
+			<when test="target == 'title'">
+				and LOWER(board_title) LIKE LOWER('%'||#{keyword}||'%')
+			</when>
+			<when test="target == 'content'">
+				and LOWER(board_content) LIKE LOWER('%'||#{keyword}||'%')
+			</when>
+			<when test="target == 'writer'">
+				and user_no LIKE (
+					SELECT user_no
+					FROM user_tb
+					WHERE
+					LOWER(user_chr) = LOWER('%'||#{keyword}||'%')
+				)
+			</when>
+			<otherwise>
 				and (
-					LOWER(board_title) LIKE LOWER('%'||#{keyword}||'%')
-					OR LOWER(board_content) LIKE LOWER('%'||#{keyword}||'%')
+					LOWER(board_title) LIKE LOWER('%'||#{keyword}||'%') 
+					OR LOWER(board_content) LIKE LOWER('%'||#{keyword}||'%') 
 					OR user_no LIKE
 					(
 						SELECT user_no
@@ -151,23 +168,9 @@
 						LOWER('%'||#{keyword}||'%')
 					)
 				)
-			</when>
-			<when test="target == 'title' ">
-				and LOWER(board_title) LIKE LOWER('%'||#{keyword}||'%')
-			</when>
-			<when test="target == 'content' ">
-				and LOWER(board_content) LIKE LOWER('%'||#{keyword}||'%')
-			</when>
-			<when test="target == 'writer' ">
-				and user_no LIKE (
-					SELECT user_no
-					FROM user_tb
-					WHERE
-					LOWER(user_chr) = LOWER('%'||#{keyword}||'%')
-				)
-			</when>
-			<otherwise />
+			</otherwise>
 		</choose>
+--
 				order by board_no desc
 			)t 
 		)b INNER JOIN user_tb u 
