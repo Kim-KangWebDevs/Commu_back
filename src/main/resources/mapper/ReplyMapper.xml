@@ -16,8 +16,8 @@
 	<select id="selectReplyList" parameterType="hashmap"
 	resultType="hashmap">
 	-- 3차검색, 페이징 처리
-	SELECT reply_no, r.user_no, u.user_chr, reply_content, reply_group,
-	reply_dept, reply_regdate
+	SELECT reply_no as replyNo, r.user_no as userNo, u.user_chr as userChr, reply_content as replyContent, reply_group as replyGroup,
+		reply_dept as replyDept, reply_regdate as replyRegdate
 	FROM(
 
 		-- 2차검색, 정렬된 값에 순번을 재부여
@@ -30,30 +30,28 @@
 			reply_regdate
 			from reply_tb
 			WHERE board_no = #{boardNo}
+				and reply_deleted = 0 
 			
 			<choose>
-				<when test="reply_order == 'asc' ">
-					ORDER BY reply_group asc, reply_no asc
+				<when test="replyOrder == null or replyOrder == 'asc' ">
+					ORDER BY reply_group, reply_no
 					)
 				</when>
-				<when test="reply_order == 'desc' ">
-					ORDER BY reply_group desc, reply_no desc
+				<when test="replyOrder != null and replyOrder == 'desc' ">
+					ORDER BY reply_group desc, reply_no
 					)
-					ORDER BY rownum desc 
 				</when>
-				<otherwise>
-					ORDER BY reply_group asc, reply_no asc 
-					)
-				</otherwise>
+				<otherwise />
 			</choose>
 			
 	)r INNER JOIN user_tb u
 	ON r.user_no = u.user_no
 	WHERE rnum between #{startRow} and #{endRow} 
+	ORDER BY rnum
 	</select>
 	
 	<!-- 댓글 추가 및 수정 -->
-	<insert id="insertReply" parameterType="com.Commu_back.vo.ReplyVO">
+	<insert id="insertReply" parameterType="hashmap">
 		<![CDATA[
 			MERGE INTO reply_tb 
 			USING DUAL 
@@ -75,25 +73,46 @@
 			-- 기존 댓글 없을 때 댓글 추가 
 			WHEN NOT MATCHED THEN 
 			INSERT (board_no, reply_group, reply_dept, reply_content, user_no) 
-			VALUES ( #{boardNo}, #{replyGroup}, #{replyDept}, #{replyContent}, (
-				SELECT user_no 
-				FROM user_tb 
-				WHERE LOWER(user_id) = LOWER(#{userId}) 
-				) 
-	        )
-        ]]>
+		]]>
+			<choose>
+				<when test="replyGroup == null or replyGroup == 0 ">
+				-- 댓글 작성시 Group의 기본 값은 해당 댓글의 Rno값
+				VALUES ( #{boardNo}, #{replyDept}, #{replyContent}, 
+					(
+						SELECT user_no 
+						FROM user_tb 
+						WHERE LOWER(user_id) = LOWER(#{userId}) 
+					), 
+					(
+						SELECT max(reply_no)  
+						FROM reply_tb 
+					) 
+				)
+				</when>
+				<otherwise>
+					-- 대댓글 작성시 Group의 값은 해당 댓글의 Rno값 
+					VALUES ( #{boardNo}, #{replyGroup}, #{replyDept}, #{replyContent}, (
+					SELECT user_no 
+					FROM user_tb 
+					WHERE LOWER(user_id) = LOWER(#{userId}) 
+					) 
+		        )
+				</otherwise>
+			</choose>
 	</insert>
 	
 	<!-- 댓글 삭제 -->
-	<delete id="deleteReply">
-		delete from reply_tb 
-		where reply_no = #{replyNo} 
+	<update id="deleteReply">
+		UPDATE reply_tb 
+		SET reply_deleted = 1, 
+			reply_deleteddate = sysdate 
+		WHERE reply_no = #{replyNo} 
 		AND user_no = 
 		(
 			SELECT user_no 
 			FROM user_tb 
 			WHERE LOWER(user_id) = LOWER(#{userId})  
 		) 
-	</delete>
+	</update>
 	
 </mapper>

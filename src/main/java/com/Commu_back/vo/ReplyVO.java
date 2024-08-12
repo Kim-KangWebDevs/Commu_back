@@ -16,5 +16,6 @@ public class ReplyVO {
     private Integer replyDept;
     private String replyContent; 
     private String replyRegdate;
+    private String replyUpdateate;
 
 }

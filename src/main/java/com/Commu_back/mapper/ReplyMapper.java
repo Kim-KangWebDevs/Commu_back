@@ -6,8 +6,6 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.Commu_back.vo.ReplyVO;
-
 @Mapper
 public interface ReplyMapper {
 
@@ -15,11 +13,11 @@ public interface ReplyMapper {
 	public int selectReplyCount(@Param("boardNo") int board_no);
 
 	// 댓글 리스트 조회
-	public List<Map<String, Object>> selectReplyList(Map<String, Object> reply_map);
+	public List<Map<String, Object>> selectReplyList(Map<String, Object> replyMap);
 
 	// 댓글 추가 및 수정
-	public int insertReply(ReplyVO replyVO);
+	public int insertReply(Map<String, Object> replyMap);
 
 	// 댓글 삭제
-	public int deleteReply(@Param("userId") String user_id, @Param("replyNo") int reply_no);
+	public int deleteReply(@Param("replyNo") int reply_no, @Param("userId") String user_id);
 }

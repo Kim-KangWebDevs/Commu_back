@@ -33,14 +33,16 @@ public class ReplyService {
 	}
 
 	// 댓글 리스트 조회
-	public Map<String, Object> findReplylist(int boardNo, int page) {
+	public Map<String, Object> findReplylist(Integer boardNo, Integer page, String replyOrder) {
 
 		List<Map<String, Object>> replyList = new ArrayList<>();
 		Map<String, Object> replyMap = new HashMap<>();
 		
-		PagingVO pagingVO = new PagingVO(replymapper.selectReplyCount(boardNo), 20, page);
+		PagingVO pagingVO = new PagingVO(replymapper.selectReplyCount(boardNo), 20, page = page != null && page != 0 ? page : 1);
+		replyMap.put("boardNo", boardNo);
 		replyMap.put("startRow", pagingVO.getStartRow());
 		replyMap.put("endRow", pagingVO.getEndRow());
+		replyMap.put("replyOrder", replyOrder);
 		replyList = replymapper.selectReplyList(replyMap);
 
 		replyMap = new HashMap<>();
@@ -53,22 +55,25 @@ public class ReplyService {
 
 	// 댓글 추가 및 수정
 	@Transactional(rollbackFor = Exception.class)
-	public int addReply(ReplyVO replyVO) {
+	public int addReply(ReplyVO replyVO, String userId) {
 
 		if (replyVO.getReplyNo() == null)
 			replyVO.setReplyNo(0);
 		if (replyVO.getReplyGroup() == null)
 			replyVO.setReplyGroup(0);
 
-		return replymapper.insertReply(replyVO);
+		Map<String, Object> replyMap = objectMapper.convertValue(replyVO, Map.class);
+		replyMap.put("userId", userId);
+		
+		return replymapper.insertReply(replyMap);
 
 	}
 
 	// 댓글 삭제
 	@Transactional(rollbackFor = Exception.class)
-	public int removeReply(String userId, int replyNo) {
+	public int removeReply(int replyNo, String userId) {
 
-		return replymapper.deleteReply(userId, replyNo);
+		return replymapper.deleteReply(replyNo, userId);
 
 	}
 
