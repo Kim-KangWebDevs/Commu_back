@@ -49,8 +49,7 @@ class CommuBackApplicationTests {
 	//
 	private final int USER_MAX = 240;
 	private final int BOARD_MAX = 1234;
-	private final int REPLY_MAX = 5678;
-	private final int REREPLY_MAX = 3456;
+	private final int REPLY_MAX = 9876;
 
 	// 2) 카테고리 2차원 배열 생성
 	String[][] categories = { { "notice", "공지", "3" }, { "free", "자유", "3" }, { "game", "게임", "3" },
@@ -176,7 +175,7 @@ class CommuBackApplicationTests {
 			mvc.perform(MockMvcRequestBuilders.post("/test/addboard.do").contentType(MediaType.APPLICATION_JSON)
 					.content(requestBody));
 
-			log.info("생성된 회원 정보 : " + requestBody);
+			log.info("생성된 게시글 정보 : " + requestBody);
 
 			// 3-2 가입된 회원 수 증가
 			BOARD_COUNT++;
@@ -200,28 +199,45 @@ class CommuBackApplicationTests {
 		int REPLY_COUNT = 0;
 		String requestBody;
 		ReplyVO replyVO;
-
+		
 		// 1. 댓글 리스트 생성
-		for (int i = 0; i < REPLY_MAX; i++) {
+		for (int i = 1; i < REPLY_MAX + 1; i++) {
+			int bno = (int) (Math.random() * (BOARD_MAX - 1) + 1);
 			replyVO = new ReplyVO();
-			replyVO.setBoardNo((int) (Math.random() * (BOARD_MAX - 1) + 1));
+			replyVO.setBoardNo(bno);
 			replyVO.setUserId(("user" + ((int) (Math.random() * (USER_MAX - 1)) + 2)));
 			replyVO.setReplyContent(i + "번째로 생성된 댓글의 내용입니다. ");
 			replyVO.setReplyDept(0);
-			replyVO.setReplyGroup(0);
+			replyVO.setReplyGroup(i);
 			replys.add(replyVO);
+			
+			int group = i;
+			// 2. 대댓글 리스트 생성
+			while((int) (Math.random() * 2) == 1 && i + 1 < REPLY_MAX + 1) {
+				
+				i++;
+				replyVO = new ReplyVO();
+				replyVO.setBoardNo(bno);
+				replyVO.setUserId(("user" + ((int) (Math.random() * (USER_MAX - 1)) + 2)));
+				replyVO.setReplyContent((i + REPLY_MAX) + "번째로 생성된 댓글의 내용입니다.\n이 이것은 대댓글 입니다. ");
+				replyVO.setReplyDept(1);
+				replyVO.setReplyGroup(group);
+				replys.add(replyVO);
+				
+			}
+			
 		}
 
-		// 2. 대댓글 리스트 생성
-		for (int i = 0; i < REREPLY_MAX; i++) {
-			replyVO = new ReplyVO();
-			replyVO.setBoardNo((int) (Math.random() * (BOARD_MAX - 1) + 1));
-			replyVO.setUserId(("user" + ((int) (Math.random() * (USER_MAX - 1)) + 2)));
-			replyVO.setReplyContent((i + REPLY_MAX) + "번째로 생성된 댓글의 내용입니다.\n이 이것은 대댓글 입니다. ");
-			replyVO.setReplyDept(1);
-			replyVO.setReplyGroup((int) (Math.random() * REPLY_MAX - 1) + 1);
-			replys.add(replyVO);
-		}
+//		// 2. 대댓글 리스트 생성
+//		for (int i = 0; i < REREPLY_MAX; i++) {
+//			replyVO = new ReplyVO();
+//			replyVO.setBoardNo((int) (Math.random() * (BOARD_MAX - 1) + 1));
+//			replyVO.setUserId(("user" + ((int) (Math.random() * (USER_MAX - 1)) + 2)));
+//			replyVO.setReplyContent((i + REPLY_MAX) + "번째로 생성된 댓글의 내용입니다.\n이 이것은 대댓글 입니다. ");
+//			replyVO.setReplyDept(1);
+//			replyVO.setReplyGroup((int) (Math.random() * REPLY_MAX - 1) + 1);
+//			replys.add(replyVO);
+//		}
 
 		// 3. 게시글 리스트 삽입
 		for (int i = 0; i < replys.size(); i++) {

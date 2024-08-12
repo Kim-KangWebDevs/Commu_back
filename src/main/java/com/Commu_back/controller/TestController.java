@@ -44,12 +44,12 @@ public class TestController {
 	// 3. 게시글 추가
 	@PostMapping("/addboard.do")
 	public ResponseEntity<Integer> boardWrite(@RequestBody BoardVO boardVO) {
-		return ResponseEntity.ok(boardservice.addBoard(boardVO));
+		return ResponseEntity.ok(boardservice.addBoard(boardVO, boardVO.getUserId()));
 	}
 
 	// 4. 댓글 추가 및 수정
 	@PostMapping("/addreply.do")
 	public ResponseEntity<Integer> writereply(@RequestBody ReplyVO replyVO) throws Exception {
-		return ResponseEntity.ok(replyservice.addReply(replyVO));
+		return ResponseEntity.ok(replyservice.addReply(replyVO, replyVO.getUserId()));
 	}
 }
