@@ -19,7 +19,7 @@ public class BoardService {
 
 	private final BoardMapper boardmapper;
 
-	ObjectMapper objectmapper = new ObjectMapper();
+	ObjectMapper objectMapper = new ObjectMapper();
 
 	@Autowired
 	public BoardService(BoardMapper boardmapper) {
@@ -71,7 +71,7 @@ public class BoardService {
 		boardMap.put("keyword", keyword);
 
 		// 페이징
-		PagingVO pagingVO = new PagingVO(boardmapper.selectBoardCount(boardMap), 20, page = page != null ? page : 1);
+		PagingVO pagingVO = new PagingVO(boardmapper.selectBoardCount(boardMap), 20, page = page != null && page != 0 ? page : 1);
 		boardMap.put("startRow", pagingVO.getStartRow());
 		boardMap.put("endRow", pagingVO.getEndRow());
 
@@ -88,19 +88,22 @@ public class BoardService {
 	}
 
 	// 게시글 조회
-	public Map<String, Object> fineBoard(int boardNo) {
+	public Map<String, Object> fineBoard(Integer boardNo) {
 
 		return boardmapper.selectBoard(boardNo);
 	}
 
 	// 게시글 추가 및 수정
 	@Transactional(rollbackFor = Exception.class)
-	public int addBoard(BoardVO boardVO) {
+	public int addBoard(BoardVO boardVO, String userId) {
 
 		if (boardVO.getBoardNo() == null)
 			boardVO.setBoardNo(0);
-
-		return boardmapper.insertBoard(boardVO);
+		
+		Map<String, Object> boardMap = objectMapper.convertValue(boardVO, Map.class);
+		boardMap.put("userId", userId);
+		
+		return boardmapper.insertBoard(boardMap);
 	}
 
 	// 게시글 삭제

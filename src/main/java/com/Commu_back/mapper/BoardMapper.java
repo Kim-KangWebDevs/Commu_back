@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.Commu_back.vo.BoardCategoryVO;
-import com.Commu_back.vo.BoardVO;
 
 @Mapper
 public interface BoardMapper {
@@ -39,7 +38,7 @@ public interface BoardMapper {
 	public Map<String, Object> selectBoard(@Param("boardNo") int boardNo);
 
 	// 게시글 추가 및 수정
-	public int insertBoard(BoardVO boardVO);
+	public int insertBoard(Map<String, Object> boardMap);
 
 	// 게시글 삭제
 	public int deleteBoard(@Param("boardNo") int boardNo, @Param("userId") String userId);

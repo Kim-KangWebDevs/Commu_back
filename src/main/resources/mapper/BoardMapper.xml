@@ -12,11 +12,12 @@
 	</insert>
 
 	<!-- 카테고리 삭제 -->
-	<delete id="deleteCategory">
-		DELETE 
-		FROM board_category_tb 
+	<update id="deleteCategory">
+		UPDATE board_category_tb 
+		SET board_category_deleted = 1, 
+			board_category_deleteddate = sysdate 
 		WHERE board_category = LOWER(#{boardCategory}) 
-	</delete>
+	</update>
 	
 	<!-- 카테고리 총 개수 조회 -->
 	<select id="selectCategoryCount" resultType="int">
@@ -25,7 +26,8 @@
 		<choose>
 			<when test="boardCategoryDesc != null and !boardCategoryDesc.equals('')">
 				WHERE LOWER(board_category_desc)
-				LIKE LOWER('%'||#{boardCategoryDesc}||'%')
+				LIKE LOWER('%'||#{boardCategoryDesc}||'%') 
+				and board_category_deleted = 0  
 			</when>
 			<otherwise />
 		</choose>
@@ -41,6 +43,7 @@
 				<when test="boardCategoryDesc != null and !boardCategoryDesc.equals('')">
 					WHERE LOWER(board_category_desc)
 					LIKE LOWER('%'||#{boardCategoryDesc}||'%')
+					and board_category_deleted = 0  
 				</when>
 				<otherwise />
 			</choose>
@@ -60,6 +63,7 @@
 		SELECT board_category_desc 
 		FROM board_category_tb 
 		WHERE LOWER(board_category) = LOWER(#{boardCategory}) 
+			and board_category_deleted = 0 
 	</select>
 
 	<!-- 게시글 총 개수 조회 -->
@@ -67,13 +71,12 @@
 		resultType="int">
 		SELECT count(*) 
 		FROM board_tb 
+		WHERE board_deleted = 0 
 		<choose>
 			<when test="board_category != null and board_category != 'all'">
-				WHERE LOWER(board_category) = LOWER(#{boardCategory}) 
+				and LOWER(board_category) = LOWER(#{boardCategory}) 
 			</when>
-			<otherwise>
-				WHERE 1 = 1
-			</otherwise>
+			<otherwise/>
 		</choose>
 		<choose>
 			<when test="target == null or keyword == null" />
@@ -132,13 +135,12 @@
 				-- 통합검색 및 카테고리별 검색 지원 
 				SELECT board_no, board_category, board_title, user_no, board_views, board_good, board_regdate
 				FROM board_tb 
+				WHERE board_deleted = 0 
 		<choose>
 			<when test="board_category != null and board_category != 'all'">
-				WHERE LOWER(board_category) = LOWER(#{boardCategory}) 
+				and LOWER(board_category) = LOWER(#{boardCategory}) 
 			</when>
-			<otherwise>
-				WHERE 1 = 1
-			</otherwise>
+			<otherwise/>
 		</choose>
 		<choose>
 			<when test="target == null or keyword == null" />
@@ -170,8 +172,7 @@
 				)
 			</otherwise>
 		</choose>
---
-				order by board_no desc
+				ORDER BY board_no desc
 			)t 
 		)b INNER JOIN user_tb u 
 		ON b.user_no = u.user_no 
@@ -192,8 +193,8 @@
 		WHERE board_no = #{boardNo} 
 	</select>
 
-	<!-- 게시글 추가 -->
-	<insert id="insertBoard" parameterType="com.Commu_back.vo.BoardVO">
+	<!-- 게시글 추가 및 수정-->
+	<insert id="insertBoard" parameterType="hashmap">
 		<![CDATA[
 			MERGE INTO board_tb 
 			USING DUAL 
@@ -233,16 +234,19 @@
 	</insert>
 
 	<!-- 게시글 삭제 -->
-	<delete id="deleteBoard">
+	<update id="deleteBoard">
 		-- 1. 인증값으로 받아온 회원 아이디를 유저 테이블과 매칭해 유저 번호를 불러옴
-		-- 2. 게시글 테이블의 유저 번호와 조회된 번호가 같지 않으면 0을 반환 (성공시 1을 반환)
-		DELETE FROM board_tb 
+		-- 2. 게시글 테이블의 유저 번호와 조회된 번호가 같지 않으면 0을 반환 (성공시 1을 반환) 
+		-- 3. 삭제로 표기된 해당 컬럼은 조회하지 않음 
+		UPDATE board_tb 
+		SET board_deleted = 1, 
+			board_deleteddate = sysdate 
 		WHERE board_no = #{boardNo} 
 		and user_no = ( 
 			SELECT user_no 
 			FROM user_tb 
 			WHERE LOWER(user_id) = LOWER(#{userId})  
 		)
-	</delete>
+	</update>
 
 </mapper>

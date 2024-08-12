@@ -86,7 +86,7 @@ public class BoardController {
 
 	// 게시글 조회
 	@GetMapping("/detailboard.do")
-	public ResponseEntity<Map<String, Object>> boardDetail(@RequestParam("no") int boardNo) {
+	public ResponseEntity<Map<String, Object>> boardDetail(@RequestParam("no") Integer boardNo) {
 
 		log.info("게시글 조회");
 		return ResponseEntity.ok(boardservice.fineBoard(boardNo));
@@ -102,7 +102,7 @@ public class BoardController {
 		boardVO.setUserId(userId);
 
 		log.info("게시글 추가 및 수정");
-		return ResponseEntity.ok(boardservice.addBoard(boardVO));
+		return ResponseEntity.ok(boardservice.addBoard(boardVO, userId));
 
 	}
 
