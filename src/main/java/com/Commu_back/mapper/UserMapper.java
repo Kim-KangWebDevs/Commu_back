@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.Commu_back.vo.AuthVO;
 import com.Commu_back.vo.UserVO;
@@ -15,7 +16,7 @@ public interface UserMapper {
 	public List<UserVO> selectUsersAll();
 	
 	//2.사용자 번호 조회 
-	public UserVO selectUserNo(@Param("userId") int userNo);
+	public UserVO selectUserNo(@Param("userNo") int userNo);
 	
 	//3.특정 사용자 조회
 	public UserVO selectUserInfo(@Param("userId") String userId);
@@ -24,7 +25,7 @@ public interface UserMapper {
 	public List<AuthVO> selectUserAuth(@Param("userId") String userId);
 	
 	//5.사용자 권환 변경
-	public int updateAuth(UserVO userVO);
+	public int updateAuth(int roleNo);
 	
 	//6.사용자 추가
 	public int insertUser(UserVO userVo);
@@ -37,5 +38,7 @@ public interface UserMapper {
 	
 	//9.사용자 검색
 	public List<UserVO> selectSearchUser(String Search);
+	
+	public List<UserVO> userLogin(UserVO userVO);
 	
 }

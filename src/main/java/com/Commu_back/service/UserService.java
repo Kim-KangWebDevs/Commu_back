@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +22,7 @@ public class UserService {
 	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private UserMapper userMapper;
-	
+		
 	//1.전체조회
 	public List<UserVO> getSelectUsersAll(int pageNum,int pageSize){
 		PageHelper.startPage(pageNum, pageSize);
@@ -31,41 +33,15 @@ public class UserService {
 	public UserVO getSelectUserNo(int userNo){
 		return userMapper.selectUserNo(userNo);
 	}
-	
-	//3.특정유저조회
-	public Map<String, Object> getSelectUserInfo(String userId) {
-		Map<String, Object> map = new HashMap<>();
-		map.put("user",userMapper.selectUserInfo(userId));
-		map.put("userAuth", userMapper.selectUserAuth(userId));
-		return map;
-	}
-	
+		
 	//4.특정 권환 조회
-	public List<AuthVO> getSelectUserAuth(String userId){
+	public List<AuthVO> getUserAuth(String userId){
 		return userMapper.selectUserAuth(userId);
-	}
-	
-	//5. 특정 권환 변경
-	@Transactional(rollbackFor = Exception.class)
-	public int getupdateAuth(UserVO userVO, int userNo) {
-		userVO.setUserNo(userNo);
-		int row = userMapper.updateAuth(userVO);
-		return row;
-	}
-	
-	//6.유저 추가
-	@Transactional(rollbackFor = Exception.class)
-	public int setUser(UserVO userVo) {
-		String pw = userVo.getUserPw();
-		pw = passwordEncoder.encode(pw);
-		userVo.setUserPw(pw);
-		return userMapper.insertUser(userVo);
 	}
 		
 	//7.유저수정
 	@Transactional(rollbackFor = Exception.class)
-	public int getUpdateUser(UserVO userVO, int userNo) {
-		userVO.setUserNo(userNo);
+	public int getUpdateUser(UserVO userVO) {
 		String pw = userVO.getUserPw();
 		pw = passwordEncoder.encode(pw);
 		userVO.setUserPw(pw);
@@ -85,6 +61,6 @@ public class UserService {
 		PageHelper.startPage(pageNum, pageSize);
 		return userMapper.selectSearchUser(search);
 	}
-	
 
+	
 }

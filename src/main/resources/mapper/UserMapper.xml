@@ -15,7 +15,7 @@
 			user_pw AS userPw,
 			user_chr AS userChr,
 			user_email AS userEmail,
-			DATE_FORMAT(user_regdate, "%Y-%m-%d") AS userRegdate,
+			user_regdate AS userRegdate,
 			file_name AS fileName
 		FROM 
 			user_tb
@@ -48,7 +48,7 @@
 			u.user_pw AS userPw,
 			u.user_chr AS userChr,
 			u.user_email AS userEmail,
-			DATE_FORMAT(u.user_regdate, "%Y-%m-%d") AS userRegdate,
+			u.user_regdate AS userRegdate,
 			u.file_name AS fileName,
 			r.role_desc AS roleDesc
 		FROM 
@@ -135,7 +135,7 @@
 			user_pw AS userPw,
 			user_chr AS userChr,
 			user_email AS userEmail,
-			DATE_FORMAT(user_regdate, "%Y-%m-%d") AS userRegdate,
+			user_regdate AS userRegdate,
 			file_name AS fileName
 		FROM
 			user_tb
@@ -151,7 +151,7 @@
 			u.user_pw AS userPw,
 			u.user_chr AS userChr,
 			u.user_email AS userEmail,
-			DATE_FORMAT(u.user_regdate, "%Y-%m-%d") AS userRegdate,
+			u.user_regdate AS userRegdate,
 			u.file_name AS fileName,
 			r.role_desc AS roleDesc
 		FROM 
@@ -165,6 +165,20 @@
 			u.user_id LIKE '%'||#{search}||'%' or u.user_chr LIKE '%'||#{search}||'%'
 	</select>
 	
+	<select id="userLogin" resultType="com.Commu_back.vo.UserVO">
+		SELECT
+			u.user_id AS userId,
+			u.user_pw AS userPw
+		FROM
+			user_tb u INNER JOIN user_role_tb ur
+			ON
+			u.user_no = ur.user_no
+			INNER JOIN role_tb r
+			ON
+			ur.role_No =r.role_No
+		WHERE
+			user_id = #{userId} and user_pw = #{userPw}
+	</select>
 	
 	
 </mapper>

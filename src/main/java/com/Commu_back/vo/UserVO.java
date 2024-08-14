@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.SpringSecurityCoreVersion;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -75,6 +76,15 @@ public class UserVO implements UserDetails{
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+	
+	public final class SimpleGrantedAuthority implements GrantedAuthority{
+		private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
+
+		@Override
+		public String getAuthority() {
+			return null;
+		}
 	}
 		
 }
